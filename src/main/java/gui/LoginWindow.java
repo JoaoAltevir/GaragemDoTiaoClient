@@ -29,6 +29,9 @@ public class LoginWindow extends JFrame {
 		
 	}
 	
+	/**
+	 * @wbp.parser.constructor
+	 */
 	public LoginWindow(RegisterWindow register) {
 		this.register = register;
 		setLocationRelativeTo(null);

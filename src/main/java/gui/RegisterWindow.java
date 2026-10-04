@@ -25,8 +25,12 @@ public class RegisterWindow extends JFrame {
 	private LoginWindow login;
 	//COMPONENTS
 	private JTextField tf_username;
-	private JTextField tf_name;
 	private JTextField tf_password;
+	private JTextField tf_name;
+	private JButton btn_register;
+	private JButton btn_hasAccount;
+	private JButton btn_exit;
+	private JRadioButton rdbtn_eyePass;
 
 
 	/**
@@ -119,11 +123,11 @@ public class RegisterWindow extends JFrame {
 		tf_password.setBounds(145, 228, 125, 20);
 		contentPane.add(tf_password);
 		
-		JRadioButton rdbtn_eyePass = new JRadioButton("");
+		rdbtn_eyePass = new JRadioButton("");
 		rdbtn_eyePass.setBounds(271, 227, 21, 23);
 		contentPane.add(rdbtn_eyePass);
 		
-		JButton btn_register = new JButton("Finalizar registro");
+		btn_register = new JButton("Finalizar registro");
 		btn_register.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(enviarRegistro()) {
@@ -134,7 +138,7 @@ public class RegisterWindow extends JFrame {
 		btn_register.setBounds(145, 258, 123, 23);
 		contentPane.add(btn_register);
 		
-		JButton btn_hasAccount = new JButton("Já tenho conta");
+		btn_hasAccount = new JButton("Já tenho conta");
 		btn_hasAccount.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				abrirLogin();
@@ -143,7 +147,7 @@ public class RegisterWindow extends JFrame {
 		btn_hasAccount.setBounds(281, 258, 132, 23);
 		contentPane.add(btn_hasAccount);
 		
-		JButton btn_exit = new JButton("Sair");
+		btn_exit = new JButton("Sair");
 		btn_exit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fechar();
