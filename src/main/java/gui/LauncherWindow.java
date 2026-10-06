@@ -12,12 +12,16 @@ import java.awt.Font;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import network.*;
+import service.UserService;
 
 public class LauncherWindow extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	//GUI'S
 	private RegisterWindow register;
+	//SERVIÇOS
+	private UserService network;
 	//COMPONENTES
 	private JPanel contentPane;
 	private JTextField tf_ip;
@@ -60,7 +64,10 @@ public class LauncherWindow extends JFrame {
 		
 	}
 	
-	public boolean conectar() {
+	public boolean conectar(String ip, int port) {
+
+		this.network = new UserService(ip, port);
+		
 		return true;
 	}
 	
@@ -105,7 +112,7 @@ public class LauncherWindow extends JFrame {
 		btn_connect = new JButton("Conectar");
 		btn_connect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(conectar()) {
+				if(conectar(tf_ip.getText(), Integer.parseInt(tf_port.getText()))) {
 					abrirRegister();
 				}
 				erroServidor();
