@@ -29,7 +29,14 @@ public class LauncherWindow extends JFrame {
 	private JPanel contentPane;
 	private JTextField tf_ip;
 	private JTextField tf_port;
+<<<<<<< HEAD
 	private String testando = "sim"; 
+=======
+	private JLabel lbl_port;
+	private JLabel lbl_ip;
+	private JButton btn_exit;
+	private JButton btn_connect;
+>>>>>>> 2da3ed90d36fd14623d25475d86ac98bdcc3dac8
 	
 
 	/**
@@ -97,7 +104,7 @@ public class LauncherWindow extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JLabel lbl_ip = new JLabel("Insira o IP para conexão: ");
+		lbl_ip = new JLabel("Insira o IP para conexão: ");
 		lbl_ip.setFont(new Font("Trebuchet MS", Font.PLAIN, 14));
 		lbl_ip.setBounds(10, 24, 164, 25);
 		contentPane.add(lbl_ip);
@@ -107,7 +114,7 @@ public class LauncherWindow extends JFrame {
 		contentPane.add(tf_ip);
 		tf_ip.setColumns(10);
 		
-		JLabel lbl_port = new JLabel("Insira a porta para conexão:");
+		lbl_port = new JLabel("Insira a porta para conexão:");
 		lbl_port.setFont(new Font("Trebuchet MS", Font.PLAIN, 14));
 		lbl_port.setBounds(10, 70, 213, 25);
 		contentPane.add(lbl_port);
@@ -117,7 +124,7 @@ public class LauncherWindow extends JFrame {
 		contentPane.add(tf_port);
 		tf_port.setColumns(10);
 		
-		JButton btn_connect = new JButton("Conectar");
+		btn_connect = new JButton("Conectar");
 		btn_connect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(testando.equals("sim")) {
@@ -133,7 +140,7 @@ public class LauncherWindow extends JFrame {
 		btn_connect.setBounds(117, 122, 97, 32);
 		contentPane.add(btn_connect);
 		
-		JButton btn_exit = new JButton("Sair");
+		btn_exit = new JButton("Sair");
 		btn_exit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//TODO fechar o programa
