@@ -5,18 +5,24 @@ import entities.*;
 
 import java.util.Scanner;
 
+import com.google.gson.JsonObject;
+
 public class Cli {
 	public static void main(String[] args) {
 		
 		Scanner input = new Scanner(System.in);
 		String ip;
 		int port;
+		String name;
+		String password;
+		String un;
 		
 		User user = new User();
 		
 		int option = 10;
 		
 		UserService network;
+		JsonObject res = new JsonObject();
 		
 		System.out.println("Informe o ip que deseja se conectar: ");
 		ip = input.nextLine();
@@ -37,20 +43,31 @@ public class Cli {
 			switch(option) {
 				case 1:
 					System.out.println("Informe o nome completo: ");
-					user.setName(input.nextLine());
+					input.nextLine();
+					name = input.nextLine();
+					user.setName(name);
 					System.out.println("Informe o nome de usuário: ");
-					user.setUsername(input.nextLine());
+					un = input.nextLine();
+					user.setUsername(un);
 					System.out.println("Informe a senha: ");
-					user.setPassword(input.nextLine());
-					network.register(user.getName(), user.getUsername(), user.getPassword());
+					input.nextLine();
+					password = input.nextLine();
+					user.setPassword(password);
+					res = network.register(user.getName(), user.getUsername(), user.getPassword());
+					System.out.println(res);
 					break;
 				case 2:
 					System.out.println("Informe o nome de usuário: ");
-					user.setUsername(input.nextLine());
+					input.nextLine();
+					un = input.nextLine();
+					user.setUsername(un);
 					System.out.println("Informe a senha: ");
-					user.setPassword(input.nextLine());
-					String res = network.login(user.getUsername(), user.getPassword());
-					Session.setToken(res);
+					input.nextLine();
+					password = input.nextLine();
+					user.setPassword(password);
+					res = network.login(user.getUsername(), user.getPassword());
+					System.out.println(res);
+					Session.setToken(res.get("token").getAsString());
 					if(Session.getToken() != null){
 						login.logged();
 					}

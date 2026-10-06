@@ -33,6 +33,7 @@ public class LoginHandler {
                 case 1:
 
                     System.out.println("Informe o nome de usuário: ");
+                    input.nextLine();
                     un = input.nextLine();
                     JsonObject res = network.getUser(un);
                     System.out.println(res);
@@ -48,6 +49,7 @@ public class LoginHandler {
                 case 2:
                     // Atualizar Nome
                     System.out.println("Informe o nome de usuário: ");
+                    input.nextLine();
                     un = input.nextLine();
                     System.out.println("Informe o novo nome: ");
                     name = input.nextLine();
@@ -60,6 +62,7 @@ public class LoginHandler {
                 case 3:
                     // Atualizar senha  
                     System.out.println("Informe o nome de usuário: ");
+                    input.nextLine();
                     un = input.nextLine();
                     System.out.println("Informe a antiga senha: ");
                     String oldPass =input.nextLine();
@@ -77,6 +80,7 @@ public class LoginHandler {
                     //deletuser
 
                     System.out.println("Informe o nome de usuário: ");
+                    input.nextLine();
                     un = input.nextLine();
 
                     res = network.deleteUser(un);
@@ -89,6 +93,7 @@ public class LoginHandler {
                     // Logout
 
                     System.out.println("Informe o nome de usuário: ");
+                    input.nextLine();
                     un = input.nextLine();
                     
                     res = network.logout();

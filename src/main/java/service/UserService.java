@@ -14,14 +14,14 @@ public class UserService {
     }
 
 
-    public String login(String username, String password) {
+    public JsonObject login(String username, String password) {
         JsonObject data = new JsonObject();
         data.addProperty("username", username);
         data.addProperty("password", password);
 
         JsonObject resData = connection.sendRequest("login", data); 
         
-        return resData.get("token").getAsString();
+        return resData;
         
     }
 
