@@ -9,8 +9,8 @@ public class UserService {
     
     private ConnectionClient connection;
 
-    public UserService(String host, int port) {
-        this.connection = new ConnectionClient(host, port);
+    public UserService() {
+        this.connection = new ConnectionClient();
     }
 
 

@@ -5,14 +5,12 @@ import java.net.Socket;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
+import entities.Session;
+
 public class ConnectionClient {
-    private String host;
-    private int port;
     private Gson gson;
 
-    public ConnectionClient(String host, int port) {
-        this.host = host;
-        this.port = port;
+    public ConnectionClient() {
         this.gson = new Gson();
     }
 
@@ -22,7 +20,7 @@ public class ConnectionClient {
         request.add("data", data);
 
         // O try-with-resources garante que o socket e os fluxos sejam fechados no cliente
-        try (Socket socket = new Socket(host, port);
+        try (Socket socket = new Socket(Session.getIp(), Session.getPort());
              PrintWriter saida = new PrintWriter(socket.getOutputStream(), true);
              BufferedReader entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 

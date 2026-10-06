@@ -5,6 +5,9 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import entities.Session;
+
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -26,6 +29,7 @@ public class LauncherWindow extends JFrame {
 	private JPanel contentPane;
 	private JTextField tf_ip;
 	private JTextField tf_port;
+	private String testando = "sim"; 
 	
 
 	/**
@@ -48,9 +52,10 @@ public class LauncherWindow extends JFrame {
 	 * Create the frame.
 	 */
 	public LauncherWindow() {
+		
+		
 		setTitle("Inicio");
 		
-		setLocationRelativeTo(null);
 		
 		initComponents();
 		
@@ -58,11 +63,18 @@ public class LauncherWindow extends JFrame {
 	
 	public void abrirRegister() {
 		
+		this.register = new RegisterWindow(this);
+		this.register.setVisible(true);
+		this.setVisible(false);
+		
 	}
 	
 	public boolean conectar(String ip, int port) {
-
-		this.network = new UserService(ip, port);
+		
+		Session.setIp(ip);
+		Session.setPort(port);
+		
+		this.network = new UserService();
 		
 		return true;
 	}
@@ -108,10 +120,14 @@ public class LauncherWindow extends JFrame {
 		JButton btn_connect = new JButton("Conectar");
 		btn_connect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(conectar(tf_ip.getText(), Integer.parseInt(tf_port.getText()))) {
+				if(testando.equals("sim")) {
 					abrirRegister();
+				}else {
+					if(conectar(tf_ip.getText(), Integer.parseInt(tf_port.getText()))) {
+						abrirRegister();
+					}
+					erroServidor();					
 				}
-				erroServidor();
 			}
 		});
 		btn_connect.setBounds(117, 122, 97, 32);
@@ -125,6 +141,6 @@ public class LauncherWindow extends JFrame {
 		});
 		btn_exit.setBounds(10, 122, 97, 32);
 		contentPane.add(btn_exit);
-		
+		setLocationRelativeTo(null);
 	}
 }
