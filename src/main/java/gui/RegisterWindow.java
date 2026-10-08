@@ -6,6 +6,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import com.google.gson.JsonObject;
+
 import entities.Session;
 import service.UserService;
 
@@ -85,9 +87,16 @@ public class RegisterWindow extends JFrame {
 		
 	}
 	
-	public boolean enviarRegistro() {
+	public boolean enviarRegistro(String name, String username, String password) {
 		
-		return true;
+		
+		JsonObject valid = userService.register(name, username , password);
+
+		if(valid != null){
+			return true;
+		}
+
+		return false;
 	}
 	
 	public void initComponents() {
@@ -141,8 +150,8 @@ public class RegisterWindow extends JFrame {
 		btn_register = new JButton("Finalizar registro");
 		btn_register.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(enviarRegistro()) {
-					abrirLogin(tf_username.getText());
+				if(enviarRegistro(tf_name.getText(), tf_username.getText(), tf_password.getText())) {
+					abrirLogin();
 				}
 			}
 		});

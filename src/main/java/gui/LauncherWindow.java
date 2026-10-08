@@ -29,14 +29,12 @@ public class LauncherWindow extends JFrame {
 	private JPanel contentPane;
 	private JTextField tf_ip;
 	private JTextField tf_port;
-<<<<<<< HEAD
-	private String testando = "sim"; 
-=======
 	private JLabel lbl_port;
 	private JLabel lbl_ip;
 	private JButton btn_exit;
 	private JButton btn_connect;
->>>>>>> 2da3ed90d36fd14623d25475d86ac98bdcc3dac8
+
+	private String testando = "não";
 	
 
 	/**
@@ -132,8 +130,9 @@ public class LauncherWindow extends JFrame {
 				}else {
 					if(conectar(tf_ip.getText(), Integer.parseInt(tf_port.getText()))) {
 						abrirRegister();
+					}else {
+						erroServidor();											
 					}
-					erroServidor();					
 				}
 			}
 		});

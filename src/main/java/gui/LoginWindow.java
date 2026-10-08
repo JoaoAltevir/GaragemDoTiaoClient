@@ -57,7 +57,7 @@ public class LoginWindow extends JFrame {
 	}
 
 
-	public LoginWindow(RegisterWindow register, String username,UserService service) {
+	public LoginWindow(RegisterWindow register, String username, UserService service) {
 		
 		addWindowListener(new WindowAdapter() {
 			@Override
@@ -67,22 +67,8 @@ public class LoginWindow extends JFrame {
 		});
 		
 		setTitle("Login");
-		
-=======
-	
-	/**
-	 * @wbp.parser.constructor
-	 */
-	public LoginWindow(RegisterWindow register) {
-		this.register = register;
-		this.userService = service;
-		
-		
-		initComponents();
-
-		tf_username.setText(username);
-		
 	}
+
 	
 	public void fechar() {
 		
@@ -144,3 +130,4 @@ public class LoginWindow extends JFrame {
 		
 	}
 }
+
