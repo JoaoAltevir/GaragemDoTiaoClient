@@ -18,10 +18,20 @@ public class UserService {
 
     public JsonObject login(String username, String password) {
         JsonObject data = new JsonObject();
+        
         data.addProperty("username", username);
         data.addProperty("password", password);
 
         JsonObject resData = connection.sendRequest("login", data); 
+        
+        
+        data = resData.get("data").getAsJsonObject();
+        String token = data.get("token").getAsString();
+       
+        Session.setToken(token);
+        Session.setUsername(username);
+        
+        System.out.println(resData);
         
         return resData;
         
@@ -47,13 +57,18 @@ public class UserService {
         return res;
     }
 
-    public JsonObject getUser(String usernameTarget) {
+    public User getUser(String usernameTarget) {
         JsonObject data = new JsonObject();
+        User user = new User();
+        
         data.addProperty("token", Session.getToken());
         data.addProperty("username", usernameTarget);
         res = connection.sendRequest("getuser", data);
         System.out.println(res);
-        return res;
+        user.setName(res.get("name").getAsString());
+        user.setUsername(res.get("username").getAsString());
+        
+        return user;
     }
 
     public JsonObject updateUserName(String usernameTarget, String newName) {

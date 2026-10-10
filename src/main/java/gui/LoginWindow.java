@@ -6,10 +6,14 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import com.google.gson.JsonObject;
+
 import entities.Session;
 import service.UserService;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import javax.swing.JTextField;
 import javax.swing.JRadioButton;
@@ -27,9 +31,11 @@ public class LoginWindow extends JFrame {
 	
 	//GUI'S
 	private RegisterWindow register;
+	private MenuWindow menu;
 	//SERVIÇOS
 	private UserService userService;
 	//COMPONENTS
+	private JsonObject res;
 	private JTextField tf_username;
 	private JTextField tf_password;
 
@@ -67,6 +73,13 @@ public class LoginWindow extends JFrame {
 		});
 		
 		setTitle("Login");
+		
+		this.register = register;
+		this.userService = service;
+		
+		setLocationRelativeTo(null);
+		
+		initComponents();
 	}
 
 	
@@ -76,6 +89,26 @@ public class LoginWindow extends JFrame {
 		register.setVisible(true);
 	}
 	
+	public String login() {
+		
+		res = this.userService.login(tf_username.getText(), tf_password.getText());
+		int status = res.get("statusCode").getAsInt();
+		
+		if(status == 200) {
+			return res.get("statusCode").getAsString();
+		}
+		
+		return res.get("message").getAsString();
+		
+	}
+	
+	public void abrirMenu(){
+		
+		this.menu = new MenuWindow();
+		
+		menu.setVisible(true);
+		this.setVisible(false);
+	}
 	public void initComponents() {
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -113,9 +146,19 @@ public class LoginWindow extends JFrame {
 		rdbtn_eyePass.setBounds(142, 173, 21, 23);
 		contentPane.add(rdbtn_eyePass);
 		
-		JButton btn_register = new JButton("Login");
-		btn_register.setBounds(10, 204, 126, 23);
-		contentPane.add(btn_register);
+		JButton btn_login = new JButton("Login");
+		btn_login.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String status = login();
+				if(status.equals("200")) {
+					abrirMenu();
+				}else {
+					JOptionPane.showMessageDialog(LoginWindow.this, status);
+				}
+			}
+		});
+		btn_login.setBounds(10, 204, 126, 23);
+		contentPane.add(btn_login);
 		
 		JButton btn_exit = new JButton("Sair");
 		btn_exit.addActionListener(new ActionListener() {
