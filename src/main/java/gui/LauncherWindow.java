@@ -5,6 +5,9 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import entities.Session;
+
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -12,16 +15,26 @@ import java.awt.Font;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import network.*;
+import service.UserService;
 
 public class LauncherWindow extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	//GUI'S
 	private RegisterWindow register;
+	//SERVIÇOS
+	private UserService network;
 	//COMPONENTES
 	private JPanel contentPane;
 	private JTextField tf_ip;
 	private JTextField tf_port;
+	private JLabel lbl_port;
+	private JLabel lbl_ip;
+	private JButton btn_exit;
+	private JButton btn_connect;
+
+	private String testando = "não";
 	
 
 	/**
@@ -44,9 +57,10 @@ public class LauncherWindow extends JFrame {
 	 * Create the frame.
 	 */
 	public LauncherWindow() {
+		
+		
 		setTitle("Inicio");
 		
-		setLocationRelativeTo(null);
 		
 		initComponents();
 		
@@ -54,9 +68,19 @@ public class LauncherWindow extends JFrame {
 	
 	public void abrirRegister() {
 		
+		this.register = new RegisterWindow(this);
+		this.register.setVisible(true);
+		this.setVisible(false);
+		
 	}
 	
-	public boolean conectar() {
+	public boolean conectar(String ip, int port) {
+		
+		Session.setIp(ip);
+		Session.setPort(port);
+		
+		this.network = new UserService();
+		
 		return true;
 	}
 	
@@ -78,7 +102,7 @@ public class LauncherWindow extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JLabel lbl_ip = new JLabel("Insira o IP para conexão: ");
+		lbl_ip = new JLabel("Insira o IP para conexão: ");
 		lbl_ip.setFont(new Font("Trebuchet MS", Font.PLAIN, 14));
 		lbl_ip.setBounds(10, 24, 164, 25);
 		contentPane.add(lbl_ip);
@@ -88,7 +112,7 @@ public class LauncherWindow extends JFrame {
 		contentPane.add(tf_ip);
 		tf_ip.setColumns(10);
 		
-		JLabel lbl_port = new JLabel("Insira a porta para conexão:");
+		lbl_port = new JLabel("Insira a porta para conexão:");
 		lbl_port.setFont(new Font("Trebuchet MS", Font.PLAIN, 14));
 		lbl_port.setBounds(10, 70, 213, 25);
 		contentPane.add(lbl_port);
@@ -98,19 +122,24 @@ public class LauncherWindow extends JFrame {
 		contentPane.add(tf_port);
 		tf_port.setColumns(10);
 		
-		JButton btn_connect = new JButton("Conectar");
+		btn_connect = new JButton("Conectar");
 		btn_connect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(conectar()) {
+				if(testando.equals("sim")) {
 					abrirRegister();
+				}else {
+					if(conectar(tf_ip.getText(), Integer.parseInt(tf_port.getText()))) {
+						abrirRegister();
+					}else {
+						erroServidor();											
+					}
 				}
-				erroServidor();
 			}
 		});
 		btn_connect.setBounds(117, 122, 97, 32);
 		contentPane.add(btn_connect);
 		
-		JButton btn_exit = new JButton("Sair");
+		btn_exit = new JButton("Sair");
 		btn_exit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//TODO fechar o programa
@@ -118,6 +147,6 @@ public class LauncherWindow extends JFrame {
 		});
 		btn_exit.setBounds(10, 122, 97, 32);
 		contentPane.add(btn_exit);
-		
+		setLocationRelativeTo(null);
 	}
 }
