@@ -44,7 +44,7 @@ public class UserService {
         data.addProperty("password", password);
         
         res = connection.sendRequest("register", data);
-        System.out.println(res);
+        System.out.println("Resposta recebida: " + res);
         return res;
     }
 
@@ -52,8 +52,11 @@ public class UserService {
         JsonObject data = new JsonObject();
         data.addProperty("token", Session.getToken()); // Utiliza o token da sessão ativa
         
+        Session.setToken(null);
+        Session.setUsername(null);
+        
         res = connection.sendRequest("logout", data);
-        System.out.println(res);
+        System.out.println("Resposta recebida: " + res);
         return res;
     }
 
@@ -64,40 +67,53 @@ public class UserService {
         data.addProperty("token", Session.getToken());
         data.addProperty("username", usernameTarget);
         res = connection.sendRequest("getuser", data);
-        System.out.println(res);
-        user.setName(res.get("name").getAsString());
-        user.setUsername(res.get("username").getAsString());
+        JsonObject resData = res.get("data").getAsJsonObject();
+
+        System.out.println("Resposta recebida: " + res);
+
+        user.setName(resData.get("name").getAsString());
+        user.setUsername(resData.get("username").getAsString());
         
         return user;
     }
 
-    public JsonObject updateUserName(String usernameTarget, String newName) {
+    public JsonObject updateUserName(String newName) {
+    	
         JsonObject data = new JsonObject();
+        
         data.addProperty("token", Session.getToken());
-        data.addProperty("username", usernameTarget);
+        data.addProperty("username", Session.getUsername());
         data.addProperty("name", newName);
         res = connection.sendRequest("updateusername", data);
-        System.out.println(res);
+        
+        System.out.println("Resposta recebida: " + res);
         return res;
     }
 
-    public JsonObject updateUserPassword(String usernameTarget, String oldPassword, String newPassword) {
+    public JsonObject updateUserPassword(String oldPassword, String newPassword) {
+    	
         JsonObject data = new JsonObject();
+        
         data.addProperty("token", Session.getToken());
-        data.addProperty("username", usernameTarget);
+        data.addProperty("username", Session.getUsername());
         data.addProperty("oldPassword", oldPassword);
         data.addProperty("newPassword", newPassword);
         res = connection.sendRequest("updateuserpassword", data);
-        System.out.println(res);
+        
+        System.out.println("Resposta recebida: " + res);
         return res;
     }
 
-    public JsonObject deleteUser(String usernameTarget) {
+    public JsonObject deleteUser() {
         JsonObject data = new JsonObject();
         data.addProperty("token", Session.getToken());
-        data.addProperty("username", usernameTarget);
+        data.addProperty("username", Session.getUsername());
+        
+        Session.setToken(null);
+        Session.setUsername(null);
+        
         res = connection.sendRequest("deleteuser", data);
-        System.out.println(res);
+        System.out.println("Resposta recebida: " + res);
         return res;
     }
 }

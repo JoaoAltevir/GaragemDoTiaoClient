@@ -25,6 +25,7 @@ public class ConnectionClient {
              BufferedReader entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 
             // Envia a requisição no formato esperado pelo servidor
+            System.out.println("Requuest enviada: " + request);
             saida.println(request.toString());
 
             // Lê a resposta do servidor

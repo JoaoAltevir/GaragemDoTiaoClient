@@ -7,6 +7,8 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -20,6 +22,9 @@ public class ProfileWindow extends JFrame {
 	private JPanel contentPane;
 	//GUIS
 	private MenuWindow menu;
+	private UpdatePasswordWindow updatePassword;
+	private UpdateUsernameWindow updateUserName;
+	//componentes
 	private JButton btn_updatePassword;
 	private JButton btn_updateNome;
 	private JButton btnNewButton;
@@ -47,10 +52,11 @@ public class ProfileWindow extends JFrame {
 		setTitle("Perfil");
 		this.servico = new UserService();
 		
-		initComponents();
-		
 		this.name = name;
 		this.username = username;
+		
+		initComponents();
+		
 		
 	}
 	
@@ -60,6 +66,52 @@ public class ProfileWindow extends JFrame {
 		this.menu.setVisible(true);
 		
 	}
+	
+	public void atualizarSenha() {
+		
+		this.updatePassword = new UpdatePasswordWindow();
+		this.updatePassword.setVisible(true);
+	}
+	
+	public void atualizarNome() {
+		
+		this.updateUserName = new UpdateUsernameWindow();
+		this.updateUserName.setVisible(true);
+	}
+	
+	public void logout(){
+		
+		int option = JOptionPane.showConfirmDialog(this, "Você deseja fazer o logout?");
+		
+		if(option == JOptionPane.YES_OPTION) {
+			
+			servico.logout();
+			
+			voltarParaLogin();
+		}
+		
+	}
+	
+	public void deletarUsuario() {
+		
+		int option = JOptionPane.showConfirmDialog(this, "Você deseja realmente excluir a conta? Esse processo é irreversivel");
+		
+		if(option == JOptionPane.YES_OPTION) {
+			
+			servico.deleteUser();
+			voltarParaLogin();
+	
+		}
+		
+	}
+	
+	public void voltarParaLogin() {
+		
+		this.menu.voltarParaLogin();
+		this.dispose();
+	
+	}
+	
 	
 	public void initComponents() {
 		
@@ -74,6 +126,7 @@ public class ProfileWindow extends JFrame {
 		btn_deleteUser = new JButton("DELETAR USUÁRIO");
 		btn_deleteUser.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				deletarUsuario();
 			}
 		});
 		btn_deleteUser.setBounds(10, 174, 329, 23);
@@ -82,7 +135,9 @@ public class ProfileWindow extends JFrame {
 		btn_updatePassword = new JButton("Alterar Senha");
 		btn_updatePassword.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				atualizarSenha();
 			}
+			
 		});
 		btn_updatePassword.setBounds(10, 142, 99, 23);
 		contentPane.add(btn_updatePassword);
@@ -90,7 +145,9 @@ public class ProfileWindow extends JFrame {
 		btn_updateNome = new JButton("Alterar Nome");
 		btn_updateNome.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				atualizarNome();
 			}
+			
 		});
 		btn_updateNome.setBounds(121, 142, 108, 23);
 		contentPane.add(btn_updateNome);
@@ -98,6 +155,7 @@ public class ProfileWindow extends JFrame {
 		btnNewButton = new JButton("LOGOUT");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				logout();
 			}
 		});
 		btnNewButton.setBounds(250, 142, 89, 23);

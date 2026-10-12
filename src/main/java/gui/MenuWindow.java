@@ -23,15 +23,17 @@ public class MenuWindow extends JFrame {
 	private JTable table;
 	//GUI'S
 	ProfileWindow profile;
+	LoginWindow login;
 	//SERVIÇOS
 	UserService userService;
 
 	/**
 	 * Create the frame.
 	 */
-	public MenuWindow() {
+	public MenuWindow(LoginWindow login) {
 		setTitle("Menu");
 		
+		this.login = login;
 		this.userService = new UserService();
 		initComponents();
 		
@@ -45,6 +47,19 @@ public class MenuWindow extends JFrame {
 		profile.setVisible(true);
 		this.setVisible(false);
 		
+	}
+	
+	public void fecharJanela() {
+		
+		this.dispose();
+		this.login.setVisible(true);
+		
+	}
+	
+	public void voltarParaLogin() {
+		
+		fecharJanela();
+	
 	}
 	
 	public void initComponents() {

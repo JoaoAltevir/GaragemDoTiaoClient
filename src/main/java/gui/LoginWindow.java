@@ -104,7 +104,7 @@ public class LoginWindow extends JFrame {
 	
 	public void abrirMenu(){
 		
-		this.menu = new MenuWindow();
+		this.menu = new MenuWindow(this);
 		
 		menu.setVisible(true);
 		this.setVisible(false);
