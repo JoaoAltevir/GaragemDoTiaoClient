@@ -30,7 +30,7 @@ public class UpdatePasswordWindow extends JFrame {
 	public UpdatePasswordWindow() {
 		addWindowListener(new WindowAdapter() {
 			@Override
-			public void windowClosed(WindowEvent e) {
+			public void windowClosing(WindowEvent e) {
 				fecharJanela();
 			}
 		});
@@ -44,6 +44,8 @@ public class UpdatePasswordWindow extends JFrame {
 	public void atualizarSenha() {
 		
 		servico.updateUserPassword(this.tf_oldPassword.getText(), this.tf_newPassword.getText());
+		fecharJanela();
+
 	}
 	
 	public void fecharJanela() {
@@ -54,7 +56,7 @@ public class UpdatePasswordWindow extends JFrame {
 		
 		
 		
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 189, 235);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));

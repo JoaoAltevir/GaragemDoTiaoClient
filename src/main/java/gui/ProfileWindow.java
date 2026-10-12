@@ -44,14 +44,15 @@ public class ProfileWindow extends JFrame {
 	public ProfileWindow(String name, String username, MenuWindow menu) {
 		addWindowListener(new WindowAdapter() {
 			@Override
-			public void windowClosed(WindowEvent e) {
+			public void windowClosing(WindowEvent e) {
 				fecharJanela();
 			}
 		});
 		
 		setTitle("Perfil");
+
 		this.servico = new UserService();
-		
+		this.menu = menu;
 		this.name = name;
 		this.username = username;
 		
@@ -85,8 +86,7 @@ public class ProfileWindow extends JFrame {
 		
 		if(option == JOptionPane.YES_OPTION) {
 			
-			servico.logout();
-			
+			servico.logout();	
 			voltarParaLogin();
 		}
 		
@@ -115,7 +115,7 @@ public class ProfileWindow extends JFrame {
 	
 	public void initComponents() {
 		
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 368, 243);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));

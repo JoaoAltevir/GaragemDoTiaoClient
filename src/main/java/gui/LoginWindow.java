@@ -89,16 +89,17 @@ public class LoginWindow extends JFrame {
 		register.setVisible(true);
 	}
 	
-	public String login() {
+	public int login() {
 		
 		res = this.userService.login(tf_username.getText(), tf_password.getText());
+
 		int status = res.get("statusCode").getAsInt();
 		
 		if(status == 200) {
-			return res.get("statusCode").getAsString();
+			return status;
 		}
-		
-		return res.get("message").getAsString();
+
+		return status;
 		
 	}
 	
@@ -111,7 +112,7 @@ public class LoginWindow extends JFrame {
 	}
 	public void initComponents() {
 		
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 195, 307);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -149,11 +150,11 @@ public class LoginWindow extends JFrame {
 		JButton btn_login = new JButton("Login");
 		btn_login.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String status = login();
-				if(status.equals("200")) {
+				int status = login();
+				if(status == 200) {
 					abrirMenu();
 				}else {
-					JOptionPane.showMessageDialog(LoginWindow.this, status);
+					JOptionPane.showMessageDialog(LoginWindow.this, "Credenciais inválidas!");
 				}
 			}
 		});

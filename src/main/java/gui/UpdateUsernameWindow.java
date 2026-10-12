@@ -28,7 +28,7 @@ public class UpdateUsernameWindow extends JFrame {
 	public UpdateUsernameWindow() {
 		addWindowListener(new WindowAdapter() {
 			@Override
-			public void windowClosed(WindowEvent e) {
+			public void windowClosing(WindowEvent e) {
 				fecharJanela();
 			}
 		});
@@ -42,6 +42,8 @@ public class UpdateUsernameWindow extends JFrame {
 	public void atualizarNome() {
 		
 		servico.updateUserName(this.tf_newName.getText());
+		fecharJanela();
+
 	}
 	
 	public void fecharJanela() {
@@ -52,7 +54,7 @@ public class UpdateUsernameWindow extends JFrame {
 		
 		
 		
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 189, 188);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
