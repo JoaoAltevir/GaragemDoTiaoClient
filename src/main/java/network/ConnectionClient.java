@@ -25,12 +25,13 @@ public class ConnectionClient {
              BufferedReader entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 
             // Envia a requisição no formato esperado pelo servidor
-            System.out.println("Requuest enviada: " + request);
+            System.out.println("Request enviada: " + request);
             saida.println(request.toString());
 
             // Lê a resposta do servidor
             String responseJson = entrada.readLine();
             
+            System.out.println("Resposta recebida: " + responseJson);
             if (responseJson != null && !responseJson.isEmpty()) {
                 return gson.fromJson(responseJson, JsonObject.class);
             }

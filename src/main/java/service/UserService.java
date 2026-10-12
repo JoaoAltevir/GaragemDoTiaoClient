@@ -1,6 +1,9 @@
 package service;
 
 import network.ConnectionClient;
+
+import javax.swing.JOptionPane;
+
 import com.google.gson.JsonObject;
 import network.*;
 import entities.*;
@@ -24,10 +27,15 @@ public class UserService {
 
         JsonObject resData = connection.sendRequest("login", data); 
         
+        int statusCode = resData.get("statusCode").getAsInt();
+        
+        if (statusCode != 200) {
+            return resData;
+        }
         
         data = resData.get("data").getAsJsonObject();
         String token = data.get("token").getAsString();
-       
+
         Session.setToken(token);
         Session.setUsername(username);
         
