@@ -1,20 +1,15 @@
 package gui;
 
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 
 import com.google.gson.JsonObject;
 
-import entities.Session;
 import service.UserService;
 
-import javax.swing.JLabel;
-import java.awt.Font;
 import javax.swing.JTextField;
-import javax.swing.JRadioButton;
+import javax.swing.JPasswordField;
+import javax.swing.JCheckBox;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -34,12 +29,12 @@ public class RegisterWindow extends JFrame {
 	private UserService userService;
 	//COMPONENTS
 	private JTextField tf_username;
-	private JTextField tf_password;
+	private JPasswordField tf_password;
 	private JTextField tf_name;
 	private JButton btn_register;
 	private JButton btn_hasAccount;
 	private JButton btn_exit;
-	private JRadioButton rdbtn_eyePass;
+	private JCheckBox rdbtn_eyePass;
 
 
 	/**
@@ -102,80 +97,60 @@ public class RegisterWindow extends JFrame {
 	public void initComponents() {
 		
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 310, 364);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-
+		UiStyle.configureFrame(this, "Criar conta", 560, 640);
+		contentPane = UiStyle.createPage();
 		setContentPane(contentPane);
-		contentPane.setLayout(null);
-		
-		JLabel lbl_title = new JLabel("Área de Registro");
-		lbl_title.setFont(new Font("Trebuchet MS", Font.PLAIN, 15));
-		lbl_title.setBounds(61, 42, 126, 44);
-		contentPane.add(lbl_title);
-		
-		JLabel lbl_username = new JLabel("Nome de usuário: ");
-		lbl_username.setBounds(145, 88, 87, 14);
-		contentPane.add(lbl_username);
-		
-		tf_username = new JTextField();
-		tf_username.setBounds(145, 115, 125, 20);
-		contentPane.add(tf_username);
-		tf_username.setColumns(10);
-		
-		JLabel lbl_name = new JLabel("Nome Completo");
-		lbl_name.setBounds(10, 88, 97, 14);
-		contentPane.add(lbl_name);
-		
+
+		contentPane.add(UiStyle.createHeader("Crie sua conta", "Preencha seus dados para continuar."),
+				java.awt.BorderLayout.NORTH);
+		JPanel card = UiStyle.createCard();
+
 		tf_name = new JTextField();
-		tf_name.setBounds(10, 115, 126, 20);
-		contentPane.add(tf_name);
 		tf_name.setColumns(10);
-		
-		JLabel lbl_password = new JLabel("Insira sua senha:");
-		lbl_password.setBounds(10, 146, 87, 14);
-		contentPane.add(lbl_password);
-		
-		tf_password = new JTextField();
+		card.add(UiStyle.createField("Nome completo", tf_name));
+		card.add(javax.swing.Box.createVerticalStrut(14));
+
+		tf_username = new JTextField();
+		tf_username.setColumns(10);
+		card.add(UiStyle.createField("Nome de usuário", tf_username));
+		card.add(javax.swing.Box.createVerticalStrut(14));
+
+		tf_password = new JPasswordField();
 		tf_password.setColumns(10);
-		tf_password.setBounds(10, 171, 125, 20);
-		contentPane.add(tf_password);
-		
+		card.add(UiStyle.createField("Senha", tf_password));
+		char passwordEchoChar = tf_password.getEchoChar();
+		rdbtn_eyePass = UiStyle.createCheckBox("Mostrar senha");
+		rdbtn_eyePass.addActionListener(e -> tf_password.setEchoChar(
+				rdbtn_eyePass.isSelected() ? (char) 0 : passwordEchoChar));
+		rdbtn_eyePass.setAlignmentX(javax.swing.JComponent.LEFT_ALIGNMENT);
+		card.add(javax.swing.Box.createVerticalStrut(5));
+		card.add(rdbtn_eyePass);
+		card.add(javax.swing.Box.createVerticalStrut(18));
 
-		JRadioButton rdbtn_eyePass = new JRadioButton("");
-		rdbtn_eyePass.setBounds(145, 171, 21, 23);
-
-		contentPane.add(rdbtn_eyePass);
-		
-		btn_register = new JButton("Finalizar registro");
+		btn_register = UiStyle.primaryButton("Finalizar cadastro");
 		btn_register.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(enviarRegistro(tf_name.getText(), tf_username.getText(), tf_password.getText())) {
+				if(enviarRegistro(tf_name.getText(), tf_username.getText(), new String(tf_password.getPassword()))) {
 					abrirLogin();
 				}
 			}
 		});
-		btn_register.setBounds(10, 202, 126, 23);
-		contentPane.add(btn_register);
-		
-		btn_hasAccount = new JButton("Já tenho conta");
+		btn_hasAccount = UiStyle.secondaryButton("Já tenho conta");
 		btn_hasAccount.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				abrirLogin();
 			}
 		});
-		btn_hasAccount.setBounds(10, 257, 132, 23);
-		contentPane.add(btn_hasAccount);
-		
-		btn_exit = new JButton("Sair");
+		btn_exit = UiStyle.secondaryButton("Sair");
 		btn_exit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fechar();
 			}
 		});
-		btn_exit.setBounds(10, 291, 89, 23);
-		contentPane.add(btn_exit);
-		
-		setLocationRelativeTo(null);
+		card.add(UiStyle.createActions(btn_register, btn_hasAccount));
+		card.add(javax.swing.Box.createVerticalStrut(10));
+		card.add(UiStyle.createActions(btn_exit));
+		contentPane.add(card, java.awt.BorderLayout.CENTER);
+		getRootPane().setDefaultButton(btn_register);
 	}
 }

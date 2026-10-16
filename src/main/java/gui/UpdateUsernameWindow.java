@@ -1,12 +1,8 @@
 package gui;
 
-import java.awt.EventQueue;
-
 import service.*;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
@@ -19,7 +15,6 @@ public class UpdateUsernameWindow extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTextField tf_newName;
-	private JLabel lbl_newName;
 	private UserService servico;
 	
 	/**
@@ -52,44 +47,33 @@ public class UpdateUsernameWindow extends JFrame {
 	
 	public void initComponents(){
 		
-		
-		
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 189, 188);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		
+		UiStyle.configureFrame(this, "Alterar nome", 500, 390);
+		contentPane = UiStyle.createPage();
 		setContentPane(contentPane);
-		contentPane.setLayout(null);
-		
-		lbl_newName = new JLabel("Insira seu novo nome:");
-		lbl_newName.setBounds(10, 11, 143, 41);
-		contentPane.add(lbl_newName);
-		
+		contentPane.add(UiStyle.createHeader("Alterar nome", "Informe o novo nome que será exibido no seu perfil."),
+				java.awt.BorderLayout.NORTH);
+		JPanel card = UiStyle.createCard();
+
 		tf_newName = new JTextField();
-		tf_newName.setBounds(10, 48, 143, 20);
-		contentPane.add(tf_newName);
 		tf_newName.setColumns(10);
-		
-		JButton btn_update = new JButton("Atualizar");
+		card.add(UiStyle.createField("Novo nome", tf_newName));
+		card.add(javax.swing.Box.createVerticalStrut(20));
+
+		JButton btn_update = UiStyle.primaryButton("Salvar alterações");
 		btn_update.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				atualizarNome();
 			}
 		});
-		btn_update.setBounds(10, 79, 89, 23);
-		contentPane.add(btn_update);
-		
-		JButton btn_exit = new JButton("Sair");
+		JButton btn_exit = UiStyle.secondaryButton("Cancelar");
 		btn_exit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fecharJanela();
 			}
 		});
-		btn_exit.setBounds(10, 113, 89, 23);
-		contentPane.add(btn_exit);
-		
-		setLocationRelativeTo(null);
-		
+		card.add(UiStyle.createActions(btn_update, btn_exit));
+		contentPane.add(card, java.awt.BorderLayout.CENTER);
+		getRootPane().setDefaultButton(btn_update);
 	}
 }

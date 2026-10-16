@@ -1,13 +1,9 @@
 package gui;
 
-import java.awt.EventQueue;
-
 import service.*;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
+import javax.swing.JPasswordField;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -18,10 +14,8 @@ public class UpdatePasswordWindow extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private JTextField tf_oldPassword;
-	private JTextField tf_newPassword;
-	private JLabel lbl_newPassword;
-	private JLabel lbl_oldPassword;
+	private JPasswordField tf_oldPassword;
+	private JPasswordField tf_newPassword;
 	private UserService servico;
 	
 	/**
@@ -43,7 +37,8 @@ public class UpdatePasswordWindow extends JFrame {
 	
 	public void atualizarSenha() {
 		
-		servico.updateUserPassword(this.tf_oldPassword.getText(), this.tf_newPassword.getText());
+		servico.updateUserPassword(new String(this.tf_oldPassword.getPassword()),
+				new String(this.tf_newPassword.getPassword()));
 		fecharJanela();
 
 	}
@@ -53,54 +48,48 @@ public class UpdatePasswordWindow extends JFrame {
 	}
 	
 	public void initComponents(){
-		
-		
-		
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 189, 235);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		
+		UiStyle.configureFrame(this, "Alterar senha", 520, 500);
+		contentPane = UiStyle.createPage();
 		setContentPane(contentPane);
-		contentPane.setLayout(null);
-		
-		lbl_oldPassword = new JLabel("Insira sua antiga senha: ");
-		lbl_oldPassword.setBounds(10, 11, 143, 41);
-		contentPane.add(lbl_oldPassword);
-		
-		tf_oldPassword = new JTextField();
-		tf_oldPassword.setBounds(10, 48, 143, 20);
-		contentPane.add(tf_oldPassword);
+		contentPane.add(UiStyle.createHeader("Alterar senha", "Escolha uma nova senha para proteger sua conta."),
+				java.awt.BorderLayout.NORTH);
+
+		JPanel card = UiStyle.createCard();
+		tf_oldPassword = new JPasswordField();
 		tf_oldPassword.setColumns(10);
-		
-		lbl_newPassword = new JLabel("Insira sua nova senha:");
-		lbl_newPassword.setBounds(10, 62, 143, 30);
-		contentPane.add(lbl_newPassword);
-		
-		tf_newPassword = new JTextField();
-		tf_newPassword.setBounds(10, 96, 143, 20);
-		contentPane.add(tf_newPassword);
+		card.add(UiStyle.createField("Senha atual", tf_oldPassword));
+		card.add(javax.swing.Box.createVerticalStrut(16));
+
+		tf_newPassword = new JPasswordField();
 		tf_newPassword.setColumns(10);
-		
-		JButton btn_update = new JButton("Atualizar");
+		card.add(UiStyle.createField("Nova senha", tf_newPassword));
+		char oldPasswordEchoChar = tf_oldPassword.getEchoChar();
+		char newPasswordEchoChar = tf_newPassword.getEchoChar();
+		javax.swing.JCheckBox cb_showPassword = UiStyle.createCheckBox("Mostrar senhas");
+		cb_showPassword.addActionListener(e -> {
+			tf_oldPassword.setEchoChar(cb_showPassword.isSelected() ? (char) 0 : oldPasswordEchoChar);
+			tf_newPassword.setEchoChar(cb_showPassword.isSelected() ? (char) 0 : newPasswordEchoChar);
+		});
+		cb_showPassword.setAlignmentX(javax.swing.JComponent.LEFT_ALIGNMENT);
+		card.add(javax.swing.Box.createVerticalStrut(6));
+		card.add(cb_showPassword);
+		card.add(javax.swing.Box.createVerticalStrut(18));
+
+		JButton btn_update = UiStyle.primaryButton("Salvar alterações");
 		btn_update.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				atualizarSenha();
 			}
 		});
-		btn_update.setBounds(10, 127, 89, 23);
-		contentPane.add(btn_update);
-		
-		JButton btn_exit = new JButton("Sair");
+		JButton btn_exit = UiStyle.secondaryButton("Cancelar");
 		btn_exit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fecharJanela();
 			}
 		});
-		btn_exit.setBounds(10, 155, 89, 23);
-		contentPane.add(btn_exit);
-		
-		setLocationRelativeTo(null);
-		
+		card.add(UiStyle.createActions(btn_update, btn_exit));
+		contentPane.add(card, java.awt.BorderLayout.CENTER);
+		getRootPane().setDefaultButton(btn_update);
 	}
 }
