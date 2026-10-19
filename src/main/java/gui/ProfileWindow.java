@@ -76,8 +76,14 @@ public class ProfileWindow extends JFrame {
 	
 	public void atualizarNome() {
 		
-		this.updateUserName = new UpdateUsernameWindow();
+		this.updateUserName = new UpdateUsernameWindow(this);
 		this.updateUserName.setVisible(true);
+	}
+	
+	public void refresh(String name) {
+		
+		this.lbl_name.setText(name);
+		
 	}
 	
 	public void logout(){
@@ -170,6 +176,16 @@ public class ProfileWindow extends JFrame {
 		lbl_username.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		lbl_username.setBounds(58, 72, 264, 14);
 		contentPane.add(lbl_username);
+		
+		JButton btn_back = new JButton("<");
+		btn_back.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				fecharJanela();
+			}
+		});
+		btn_back.setFont(new Font("Tahoma", Font.PLAIN, 8));
+		btn_back.setBounds(10, 11, 39, 23);
+		contentPane.add(btn_back);
 		
 		setLocationRelativeTo(null);
 		

@@ -86,6 +86,7 @@ public class UpdatePasswordWindow extends JFrame {
 		btn_update.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				atualizarSenha();
+				fecharJanela();
 			}
 		});
 		btn_update.setBounds(10, 127, 89, 23);

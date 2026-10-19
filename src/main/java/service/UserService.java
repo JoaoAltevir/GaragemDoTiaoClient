@@ -52,7 +52,6 @@ public class UserService {
         data.addProperty("password", password);
         
         res = connection.sendRequest("register", data);
-        System.out.println("Resposta recebida: " + res);
         return res;
     }
 
@@ -64,7 +63,6 @@ public class UserService {
         Session.setUsername(null);
         
         res = connection.sendRequest("logout", data);
-        System.out.println("Resposta recebida: " + res);
         return res;
     }
 
@@ -77,7 +75,6 @@ public class UserService {
         res = connection.sendRequest("getuser", data);
         JsonObject resData = res.get("data").getAsJsonObject();
 
-        System.out.println("Resposta recebida: " + res);
 
         user.setName(resData.get("name").getAsString());
         user.setUsername(resData.get("username").getAsString());
@@ -94,7 +91,6 @@ public class UserService {
         data.addProperty("name", newName);
         res = connection.sendRequest("updateusername", data);
         
-        System.out.println("Resposta recebida: " + res);
         return res;
     }
 
@@ -108,7 +104,6 @@ public class UserService {
         data.addProperty("newPassword", newPassword);
         res = connection.sendRequest("updateuserpassword", data);
         
-        System.out.println("Resposta recebida: " + res);
         return res;
     }
 
@@ -121,7 +116,6 @@ public class UserService {
         Session.setUsername(null);
         
         res = connection.sendRequest("deleteuser", data);
-        System.out.println("Resposta recebida: " + res);
         return res;
     }
 }
