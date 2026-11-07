@@ -72,8 +72,14 @@ public class ProfileWindow extends JFrame {
 	
 	public void atualizarNome() {
 		
-		this.updateUserName = new UpdateUsernameWindow();
+		this.updateUserName = new UpdateUsernameWindow(this);
 		this.updateUserName.setVisible(true);
+	}
+	
+	public void refresh(String name) {
+		
+		this.lbl_name.setText(name);
+		
 	}
 	
 	public void logout(){
@@ -157,6 +163,7 @@ public class ProfileWindow extends JFrame {
 				logout();
 			}
 		});
+
 		card.add(UiStyle.createActions(btn_updatePassword, btn_updateNome, btnNewButton));
 		card.add(javax.swing.Box.createVerticalStrut(16));
 
@@ -168,5 +175,6 @@ public class ProfileWindow extends JFrame {
 		});
 		card.add(UiStyle.createActions(btn_deleteUser));
 		contentPane.add(card, java.awt.BorderLayout.CENTER);
+
 	}
 }

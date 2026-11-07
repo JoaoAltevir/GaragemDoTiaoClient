@@ -80,6 +80,7 @@ public class UpdatePasswordWindow extends JFrame {
 		btn_update.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				atualizarSenha();
+				fecharJanela();
 			}
 		});
 		JButton btn_exit = UiStyle.secondaryButton("Cancelar");

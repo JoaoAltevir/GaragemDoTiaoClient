@@ -16,17 +16,20 @@ public class UpdateUsernameWindow extends JFrame {
 	private JPanel contentPane;
 	private JTextField tf_newName;
 	private UserService servico;
+	private ProfileWindow perfil;
 	
 	/**
 	 * Create the frame.
 	 */
-	public UpdateUsernameWindow() {
+	public UpdateUsernameWindow(ProfileWindow p) {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				fecharJanela();
 			}
 		});
+		
+		this.perfil = p;
 		this.servico = new UserService();
 	
 		setTitle("Alterar nome");
@@ -37,6 +40,7 @@ public class UpdateUsernameWindow extends JFrame {
 	public void atualizarNome() {
 		
 		servico.updateUserName(this.tf_newName.getText());
+		perfil.refresh(this.tf_newName.getText());
 		fecharJanela();
 
 	}
@@ -64,6 +68,7 @@ public class UpdateUsernameWindow extends JFrame {
 		btn_update.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				atualizarNome();
+				fecharJanela();
 			}
 		});
 		JButton btn_exit = UiStyle.secondaryButton("Cancelar");
