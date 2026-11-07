@@ -4,18 +4,13 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-
 import entities.Session;
 
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
-import java.awt.Font;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import network.*;
 import service.UserService;
 
 public class LauncherWindow extends JFrame {
@@ -29,8 +24,6 @@ public class LauncherWindow extends JFrame {
 	private JPanel contentPane;
 	private JTextField tf_ip;
 	private JTextField tf_port;
-	private JLabel lbl_port;
-	private JLabel lbl_ip;
 	private JButton btn_exit;
 	private JButton btn_connect;
 
@@ -57,13 +50,7 @@ public class LauncherWindow extends JFrame {
 	 * Create the frame.
 	 */
 	public LauncherWindow() {
-		
-		
-		setTitle("Inicio");
-		
-		
 		initComponents();
-		
 	}
 	
 	public void abrirRegister() {
@@ -95,34 +82,25 @@ public class LauncherWindow extends JFrame {
 	public void initComponents() {
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 259, 224);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-
+		UiStyle.configureFrame(this, "Início", 540, 470);
+		contentPane = UiStyle.createPage();
 		setContentPane(contentPane);
-		contentPane.setLayout(null);
-		
-		lbl_ip = new JLabel("Insira o IP para conexão: ");
-		lbl_ip.setFont(new Font("Trebuchet MS", Font.PLAIN, 14));
-		lbl_ip.setBounds(10, 24, 164, 25);
-		contentPane.add(lbl_ip);
-		
+
+		contentPane.add(UiStyle.createHeader("Garagem do Tião", "Conecte-se ao servidor para começar."),
+				java.awt.BorderLayout.NORTH);
+
+		JPanel card = UiStyle.createCard();
 		tf_ip = new JTextField();
-		tf_ip.setBounds(10, 50, 143, 20);
-		contentPane.add(tf_ip);
 		tf_ip.setColumns(10);
-		
-		lbl_port = new JLabel("Insira a porta para conexão:");
-		lbl_port.setFont(new Font("Trebuchet MS", Font.PLAIN, 14));
-		lbl_port.setBounds(10, 70, 213, 25);
-		contentPane.add(lbl_port);
-		
+		card.add(UiStyle.createField("Endereço IP", tf_ip));
+
 		tf_port = new JTextField();
-		tf_port.setBounds(10, 95, 143, 20);
-		contentPane.add(tf_port);
 		tf_port.setColumns(10);
-		
-		btn_connect = new JButton("Conectar");
+		card.add(javax.swing.Box.createVerticalStrut(16));
+		card.add(UiStyle.createField("Porta do servidor", tf_port));
+		card.add(javax.swing.Box.createVerticalStrut(22));
+
+		btn_connect = UiStyle.primaryButton("Conectar");
 		btn_connect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(testando.equals("sim")) {
@@ -136,17 +114,14 @@ public class LauncherWindow extends JFrame {
 				}
 			}
 		});
-		btn_connect.setBounds(117, 122, 97, 32);
-		contentPane.add(btn_connect);
-		
-		btn_exit = new JButton("Sair");
+		btn_exit = UiStyle.secondaryButton("Sair");
 		btn_exit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//TODO fechar o programa
 			}
 		});
-		btn_exit.setBounds(10, 122, 97, 32);
-		contentPane.add(btn_exit);
-		setLocationRelativeTo(null);
+		card.add(UiStyle.createActions(btn_connect, btn_exit));
+		contentPane.add(card, java.awt.BorderLayout.CENTER);
+		getRootPane().setDefaultButton(btn_connect);
 	}
 }
