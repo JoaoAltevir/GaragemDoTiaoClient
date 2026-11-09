@@ -38,11 +38,28 @@ public class UpdateUsernameWindow extends JFrame {
 	}
 	
 	public void atualizarNome() {
-		
-		servico.updateUserName(this.tf_newName.getText());
-		perfil.refresh(this.tf_newName.getText());
-		fecharJanela();
+		String novoNome = this.tf_newName.getText().trim();
+		if (novoNome.isEmpty()) {
+			javax.swing.JOptionPane.showMessageDialog(this, "Informe o novo nome.", "Campo obrigatório",
+					javax.swing.JOptionPane.WARNING_MESSAGE);
+			return;
+		}
 
+		com.google.gson.JsonObject res = servico.updateUserName(novoNome);
+		int status = UiStyle.extractStatusCode(res);
+		String msg = UiStyle.extractMessage(res, "Não foi possível atualizar o nome.");
+
+		if (status == 200) {
+			javax.swing.JOptionPane.showMessageDialog(this, msg, "Sucesso",
+					javax.swing.JOptionPane.INFORMATION_MESSAGE);
+			if (perfil != null) {
+				perfil.refresh(novoNome);
+			}
+			fecharJanela();
+		} else {
+			javax.swing.JOptionPane.showMessageDialog(this, msg, "Erro (" + status + ")",
+					javax.swing.JOptionPane.ERROR_MESSAGE);
+		}
 	}
 	
 	public void fecharJanela() {
@@ -68,7 +85,6 @@ public class UpdateUsernameWindow extends JFrame {
 		btn_update.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				atualizarNome();
-				fecharJanela();
 			}
 		});
 		JButton btn_exit = UiStyle.secondaryButton("Cancelar");

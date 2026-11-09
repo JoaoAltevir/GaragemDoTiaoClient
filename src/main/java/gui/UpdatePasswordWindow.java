@@ -36,11 +36,27 @@ public class UpdatePasswordWindow extends JFrame {
 	}
 	
 	public void atualizarSenha() {
-		
-		servico.updateUserPassword(new String(this.tf_oldPassword.getPassword()),
-				new String(this.tf_newPassword.getPassword()));
-		fecharJanela();
+		String senhaAtual = new String(this.tf_oldPassword.getPassword());
+		String novaSenha = new String(this.tf_newPassword.getPassword());
 
+		if (senhaAtual.isEmpty() || novaSenha.isEmpty()) {
+			javax.swing.JOptionPane.showMessageDialog(this, "Preencha a senha atual e a nova senha.",
+					"Campos obrigatórios", javax.swing.JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+
+		com.google.gson.JsonObject res = servico.updateUserPassword(senhaAtual, novaSenha);
+		int status = UiStyle.extractStatusCode(res);
+		String msg = UiStyle.extractMessage(res, "Não foi possível atualizar a senha.");
+
+		if (status == 200) {
+			javax.swing.JOptionPane.showMessageDialog(this, msg, "Sucesso",
+					javax.swing.JOptionPane.INFORMATION_MESSAGE);
+			fecharJanela();
+		} else {
+			javax.swing.JOptionPane.showMessageDialog(this, msg, "Erro (" + status + ")",
+					javax.swing.JOptionPane.ERROR_MESSAGE);
+		}
 	}
 	
 	public void fecharJanela() {
@@ -80,7 +96,6 @@ public class UpdatePasswordWindow extends JFrame {
 		btn_update.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				atualizarSenha();
-				fecharJanela();
 			}
 		});
 		JButton btn_exit = UiStyle.secondaryButton("Cancelar");

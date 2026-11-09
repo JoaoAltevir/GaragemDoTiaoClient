@@ -26,6 +26,7 @@ public class UserService {
         data.addProperty("password", password);
 
         JsonObject resData = connection.sendRequest("login", data); 
+        this.res = resData;
         
         int statusCode = resData.get("statusCode").getAsInt();
         
@@ -38,6 +39,9 @@ public class UserService {
 
         Session.setToken(token);
         Session.setUsername(username);
+        if (data.has("role") && !data.get("role").isJsonNull()) {
+            Session.setRole(data.get("role").getAsString());
+        }
         
         System.out.println(resData);
         
@@ -46,10 +50,25 @@ public class UserService {
     }
 
     public JsonObject register(String name, String username, String password) {
+        return register(name, username, password, null, null);
+    }
+
+    public JsonObject register(String name, String username, String password, String role) {
+        return register(name, username, password, role, Session.getToken());
+    }
+
+    public JsonObject register(String name, String username, String password, String role, String token) {
         JsonObject data = new JsonObject();
         data.addProperty("name", name);
         data.addProperty("username", username);
         data.addProperty("password", password);
+
+        if (role != null && !role.isEmpty()) {
+            data.addProperty("role", role);
+        }
+        if (token != null && !token.isEmpty()) {
+            data.addProperty("token", token);
+        }
         
         res = connection.sendRequest("register", data);
         return res;
@@ -61,6 +80,7 @@ public class UserService {
         
         Session.setToken(null);
         Session.setUsername(null);
+        Session.setRole(null);
         
         res = connection.sendRequest("logout", data);
         return res;
@@ -73,21 +93,36 @@ public class UserService {
         data.addProperty("token", Session.getToken());
         data.addProperty("username", usernameTarget);
         res = connection.sendRequest("getuser", data);
-        JsonObject resData = res.get("data").getAsJsonObject();
 
+        if (res != null && res.has("data") && !res.get("data").isJsonNull()) {
+            JsonObject resData = res.get("data").getAsJsonObject();
 
-        user.setName(resData.get("name").getAsString());
-        user.setUsername(resData.get("username").getAsString());
+            if (resData.has("name") && !resData.get("name").isJsonNull()) {
+                user.setName(resData.get("name").getAsString());
+            }
+            if (resData.has("username") && !resData.get("username").isJsonNull()) {
+                user.setUsername(resData.get("username").getAsString());
+            }
+            if (resData.has("role") && !resData.get("role").isJsonNull()) {
+                user.setRole(resData.get("role").getAsString());
+                if (usernameTarget != null && usernameTarget.equals(Session.getUsername())) {
+                    Session.setRole(user.getRole());
+                }
+            }
+        }
         
         return user;
     }
 
     public JsonObject updateUserName(String newName) {
-    	
+        return updateUserName(Session.getUsername(), newName);
+    }
+
+    public JsonObject updateUserName(String usernameTarget, String newName) {
         JsonObject data = new JsonObject();
         
         data.addProperty("token", Session.getToken());
-        data.addProperty("username", Session.getUsername());
+        data.addProperty("username", usernameTarget);
         data.addProperty("name", newName);
         res = connection.sendRequest("updateusername", data);
         
@@ -95,11 +130,14 @@ public class UserService {
     }
 
     public JsonObject updateUserPassword(String oldPassword, String newPassword) {
-    	
+        return updateUserPassword(Session.getUsername(), oldPassword, newPassword);
+    }
+
+    public JsonObject updateUserPassword(String usernameTarget, String oldPassword, String newPassword) {
         JsonObject data = new JsonObject();
         
         data.addProperty("token", Session.getToken());
-        data.addProperty("username", Session.getUsername());
+        data.addProperty("username", usernameTarget);
         data.addProperty("oldPassword", oldPassword);
         data.addProperty("newPassword", newPassword);
         res = connection.sendRequest("updateuserpassword", data);
@@ -114,8 +152,29 @@ public class UserService {
         
         Session.setToken(null);
         Session.setUsername(null);
+        Session.setRole(null);
         
         res = connection.sendRequest("deleteuser", data);
+        return res;
+    }
+
+    public JsonObject deleteUser(String usernameTarget) {
+        JsonObject data = new JsonObject();
+        data.addProperty("token", Session.getToken());
+        data.addProperty("username", usernameTarget);
+        
+        res = connection.sendRequest("deleteuser", data);
+
+        if (usernameTarget != null && usernameTarget.equals(Session.getUsername())) {
+            Session.setToken(null);
+            Session.setUsername(null);
+            Session.setRole(null);
+        }
+
+        return res;
+    }
+
+    public JsonObject getRes() {
         return res;
     }
 }

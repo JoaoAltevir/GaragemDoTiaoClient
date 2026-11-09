@@ -6,6 +6,7 @@ public class Session {
 	private static int port;
 	private static String username;
 	private static String token;
+	private static String role;
 
 	public static String getToken() {
 		return token;
@@ -37,6 +38,14 @@ public class Session {
 	
 	public static void setUsername(String un) {
 		Session.username = un;
+	}
+
+	public static String getRole() {
+		return role;
+	}
+
+	public static void setRole(String role) {
+		Session.role = role;
 	}
 	
 	

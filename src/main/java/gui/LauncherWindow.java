@@ -106,10 +106,28 @@ public class LauncherWindow extends JFrame {
 				if(testando.equals("sim")) {
 					abrirRegister();
 				}else {
-					if(conectar(tf_ip.getText(), Integer.parseInt(tf_port.getText()))) {
-						abrirRegister();
-					}else {
-						erroServidor();											
+					String ip = tf_ip.getText().trim();
+					String portText = tf_port.getText().trim();
+					if (ip.isEmpty() || portText.isEmpty()) {
+						JOptionPane.showMessageDialog(LauncherWindow.this,
+								"Informe o endereço IP e a porta do servidor.",
+								"Campos obrigatórios", JOptionPane.WARNING_MESSAGE);
+						return;
+					}
+					try {
+						int port = Integer.parseInt(portText);
+						if (port <= 0 || port > 65535) {
+							throw new NumberFormatException();
+						}
+						if(conectar(ip, port)) {
+							abrirRegister();
+						}else {
+							erroServidor();											
+						}
+					} catch (NumberFormatException ex) {
+						JOptionPane.showMessageDialog(LauncherWindow.this,
+								"Informe uma porta numérica válida (1 a 65535).",
+								"Porta inválida", JOptionPane.WARNING_MESSAGE);
 					}
 				}
 			}
@@ -117,7 +135,8 @@ public class LauncherWindow extends JFrame {
 		btn_exit = UiStyle.secondaryButton("Sair");
 		btn_exit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//TODO fechar o programa
+				dispose();
+				System.exit(0);
 			}
 		});
 		card.add(UiStyle.createActions(btn_connect, btn_exit));

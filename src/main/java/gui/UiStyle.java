@@ -27,6 +27,8 @@ final class UiStyle {
 	static final Color ACCENT_HOVER = new Color(165, 73, 15);
 	static final Color BORDER = new Color(218, 224, 230);
 	static final Color DANGER = new Color(185, 49, 49);
+	static final Color SUCCESS = new Color(22, 128, 60);
+	static final Color WARNING = new Color(180, 110, 16);
 
 	private static final Font BODY_FONT = new Font("Segoe UI", Font.PLAIN, 14);
 	private static final Font LABEL_FONT = new Font("Segoe UI", Font.BOLD, 13);
@@ -100,24 +102,36 @@ final class UiStyle {
 		field.setFont(BODY_FONT);
 		field.setForeground(TEXT);
 		field.setBackground(SURFACE);
-		field.setBorder(BorderFactory.createCompoundBorder(
-				new LineBorder(BORDER, 1, true),
-				new EmptyBorder(8, 11, 8, 11)));
+		if (field instanceof javax.swing.JComboBox) {
+			field.setBorder(new LineBorder(BORDER, 1, true));
+		} else {
+			field.setBorder(BorderFactory.createCompoundBorder(
+					new LineBorder(BORDER, 1, true),
+					new EmptyBorder(8, 11, 8, 11)));
+		}
 		field.setPreferredSize(new Dimension(280, 42));
 		field.setMaximumSize(new Dimension(Integer.MAX_VALUE, 42));
 		field.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusGained(FocusEvent event) {
-				field.setBorder(BorderFactory.createCompoundBorder(
-						new LineBorder(ACCENT, 1, true),
-						new EmptyBorder(8, 11, 8, 11)));
+				if (field instanceof javax.swing.JComboBox) {
+					field.setBorder(new LineBorder(ACCENT, 1, true));
+				} else {
+					field.setBorder(BorderFactory.createCompoundBorder(
+							new LineBorder(ACCENT, 1, true),
+							new EmptyBorder(8, 11, 8, 11)));
+				}
 			}
 
 			@Override
 			public void focusLost(FocusEvent event) {
-				field.setBorder(BorderFactory.createCompoundBorder(
-						new LineBorder(BORDER, 1, true),
-						new EmptyBorder(8, 11, 8, 11)));
+				if (field instanceof javax.swing.JComboBox) {
+					field.setBorder(new LineBorder(BORDER, 1, true));
+				} else {
+					field.setBorder(BorderFactory.createCompoundBorder(
+							new LineBorder(BORDER, 1, true),
+							new EmptyBorder(8, 11, 8, 11)));
+				}
 			}
 		});
 	}
@@ -186,5 +200,60 @@ final class UiStyle {
 		label.setFont(BODY_FONT);
 		label.setForeground(MUTED);
 		return label;
+	}
+
+	static JPanel createStatCard(String title, JLabel valueLabel) {
+		JPanel stat = new JPanel();
+		stat.setLayout(new javax.swing.BoxLayout(stat, javax.swing.BoxLayout.Y_AXIS));
+		stat.setBackground(BACKGROUND);
+		stat.setBorder(BorderFactory.createCompoundBorder(
+				new LineBorder(BORDER, 1, true),
+				new EmptyBorder(10, 14, 10, 14)));
+
+		JLabel titleLbl = new JLabel(title);
+		titleLbl.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+		titleLbl.setForeground(MUTED);
+		titleLbl.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+
+		valueLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
+		valueLabel.setForeground(TEXT);
+		valueLabel.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+
+		stat.add(titleLbl);
+		stat.add(javax.swing.Box.createVerticalStrut(4));
+		stat.add(valueLabel);
+		return stat;
+	}
+
+	static void styleTable(javax.swing.JTable table) {
+		table.setRowHeight(32);
+		table.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+		table.setForeground(TEXT);
+		table.setBackground(SURFACE);
+		table.setGridColor(BACKGROUND);
+		table.setSelectionBackground(new Color(254, 237, 224));
+		table.setSelectionForeground(TEXT);
+		table.setShowVerticalLines(false);
+		table.setFillsViewportHeight(true);
+		if (table.getTableHeader() != null) {
+			table.getTableHeader().setFont(LABEL_FONT);
+			table.getTableHeader().setBackground(BACKGROUND);
+			table.getTableHeader().setForeground(TEXT);
+			table.getTableHeader().setReorderingAllowed(false);
+		}
+	}
+
+	static String extractMessage(com.google.gson.JsonObject res, String fallback) {
+		if (res != null && res.has("message") && !res.get("message").isJsonNull()) {
+			return res.get("message").getAsString();
+		}
+		return fallback;
+	}
+
+	static int extractStatusCode(com.google.gson.JsonObject res) {
+		if (res != null && res.has("statusCode") && !res.get("statusCode").isJsonNull()) {
+			return res.get("statusCode").getAsInt();
+		}
+		return 500;
 	}
 }

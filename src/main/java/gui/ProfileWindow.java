@@ -27,8 +27,10 @@ public class ProfileWindow extends JFrame {
 	private JButton btn_deleteUser;
 	private JLabel lbl_name;
 	private JLabel lbl_username;
+	private JLabel lbl_role;
 	private String name;
 	private String username;
+	private String role;
 	//SERVIÇOS
 	private UserService servico;
 
@@ -38,6 +40,10 @@ public class ProfileWindow extends JFrame {
 	 * Create the frame.
 	 */
 	public ProfileWindow(String name, String username, MenuWindow menu) {
+		this(name, username, entities.Session.getRole(), menu);
+	}
+
+	public ProfileWindow(String name, String username, String role, MenuWindow menu) {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
@@ -49,8 +55,9 @@ public class ProfileWindow extends JFrame {
 
 		this.servico = new UserService();
 		this.menu = menu;
-		this.name = name;
-		this.username = username;
+		this.name = name != null ? name : "-";
+		this.username = username != null ? username : "-";
+		this.role = (role != null && !role.isEmpty()) ? role : "user";
 		
 		initComponents();
 		
@@ -77,18 +84,21 @@ public class ProfileWindow extends JFrame {
 	}
 	
 	public void refresh(String name) {
-		
-		this.lbl_name.setText(name);
+		this.name = name;
+		this.lbl_name.setText("Nome completo: " + name);
 		
 	}
 	
 	public void logout(){
 		
-		int option = JOptionPane.showConfirmDialog(this, "Você deseja fazer o logout?");
+		int option = JOptionPane.showConfirmDialog(this, "Você deseja fazer o logout?", "Confirmar saída",
+				JOptionPane.YES_NO_OPTION);
 		
 		if(option == JOptionPane.YES_OPTION) {
 			
-			servico.logout();	
+			com.google.gson.JsonObject res = servico.logout();
+			String msg = UiStyle.extractMessage(res, "Sessão encerrada com sucesso.");
+			JOptionPane.showMessageDialog(this, msg, "Logout", JOptionPane.INFORMATION_MESSAGE);
 			voltarParaLogin();
 		}
 		
@@ -96,11 +106,18 @@ public class ProfileWindow extends JFrame {
 	
 	public void deletarUsuario() {
 		
-		int option = JOptionPane.showConfirmDialog(this, "Você deseja realmente excluir a conta? Esse processo é irreversivel");
+		int option = JOptionPane.showConfirmDialog(this,
+				"Você deseja realmente excluir a conta? Esse processo é irreversível.",
+				"Excluir conta", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 		
 		if(option == JOptionPane.YES_OPTION) {
 			
-			servico.deleteUser();
+			com.google.gson.JsonObject res = servico.deleteUser();
+			int status = UiStyle.extractStatusCode(res);
+			String msg = UiStyle.extractMessage(res, "Usuário deletado com sucesso.");
+			JOptionPane.showMessageDialog(this, msg,
+					status == 200 ? "Conta excluída" : "Aviso (" + status + ")",
+					status == 200 ? JOptionPane.INFORMATION_MESSAGE : JOptionPane.WARNING_MESSAGE);
 			voltarParaLogin();
 	
 		}
@@ -118,7 +135,7 @@ public class ProfileWindow extends JFrame {
 	public void initComponents() {
 		
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		UiStyle.configureFrame(this, "Meu perfil", 680, 520);
+		UiStyle.configureFrame(this, "Meu perfil", 680, 540);
 		contentPane = UiStyle.createPage();
 		setContentPane(contentPane);
 
@@ -128,7 +145,7 @@ public class ProfileWindow extends JFrame {
 		card.add(UiStyle.createSectionTitle("Dados da conta"));
 		card.add(javax.swing.Box.createVerticalStrut(12));
 
-		JPanel accountInfo = new JPanel(new java.awt.GridLayout(2, 1, 0, 8));
+		JPanel accountInfo = new JPanel(new java.awt.GridLayout(3, 1, 0, 8));
 		accountInfo.setOpaque(true);
 		accountInfo.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 12, 10, 12));
 		lbl_name = new JLabel("Nome completo: " + this.name);
@@ -137,8 +154,12 @@ public class ProfileWindow extends JFrame {
 		lbl_username = new JLabel("Nome de usuário: " + this.username);
 		lbl_username.setFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 15));
 		lbl_username.setForeground(UiStyle.TEXT);
+		lbl_role = new JLabel("Perfil de acesso: " + ("admin".equalsIgnoreCase(this.role) ? "Administrador (admin)" : "Usuário (user)"));
+		lbl_role.setFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 15));
+		lbl_role.setForeground(UiStyle.TEXT);
 		accountInfo.add(lbl_name);
 		accountInfo.add(lbl_username);
+		accountInfo.add(lbl_role);
 		accountInfo.setBackground(UiStyle.BACKGROUND);
 		card.add(accountInfo);
 		card.add(javax.swing.Box.createVerticalStrut(20));

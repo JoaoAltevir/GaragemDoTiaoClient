@@ -83,14 +83,24 @@ public class RegisterWindow extends JFrame {
 	}
 	
 	public boolean enviarRegistro(String name, String username, String password) {
-		
-		
-		JsonObject valid = userService.register(name, username , password);
+		if (name == null || name.trim().isEmpty() || username == null || username.trim().isEmpty()
+				|| password == null || password.isEmpty()) {
+			javax.swing.JOptionPane.showMessageDialog(this,
+					"Preencha todos os campos obrigatórios para criar sua conta.",
+					"Campos obrigatórios", javax.swing.JOptionPane.WARNING_MESSAGE);
+			return false;
+		}
 
-		if(valid != null){
+		JsonObject valid = userService.register(name.trim(), username.trim(), password);
+		int status = UiStyle.extractStatusCode(valid);
+		String msg = UiStyle.extractMessage(valid, "Não foi possível realizar o cadastro.");
+
+		if (status == 201 || status == 200) {
+			javax.swing.JOptionPane.showMessageDialog(this, msg, "Sucesso", javax.swing.JOptionPane.INFORMATION_MESSAGE);
 			return true;
 		}
 
+		javax.swing.JOptionPane.showMessageDialog(this, msg, "Erro (" + status + ")", javax.swing.JOptionPane.ERROR_MESSAGE);
 		return false;
 	}
 	

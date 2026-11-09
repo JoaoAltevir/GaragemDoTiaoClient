@@ -84,19 +84,29 @@ public class LoginWindow extends JFrame {
 	}
 	
 	public int login() {
-		
-		res = this.userService.login(tf_username.getText(), new String(tf_password.getPassword()));
+		String username = tf_username.getText().trim();
+		String password = new String(tf_password.getPassword());
 
-		int status = res.get("statusCode").getAsInt();
-		
-		if(status == 200) {
+		if (username.isEmpty() || password.isEmpty()) {
+			JOptionPane.showMessageDialog(this, "Informe seu nome de usuário e senha.", "Campos obrigatórios",
+					JOptionPane.WARNING_MESSAGE);
+			return 400;
+		}
+
+		res = this.userService.login(username, password);
+		int status = UiStyle.extractStatusCode(res);
+
+		if (status == 200) {
+			try {
+				this.userService.getUser(entities.Session.getUsername());
+			} catch (Exception ignored) {
+			}
 			return status;
 		}
 
 		return status;
-		
 	}
-	
+
 	public void abrirMenu(){
 		
 		this.menu = new MenuWindow(this);
@@ -138,8 +148,10 @@ public class LoginWindow extends JFrame {
 				int status = login();
 				if(status == 200) {
 					abrirMenu();
-				}else {
-					JOptionPane.showMessageDialog(LoginWindow.this, "Credenciais inválidas!");
+				} else if (res != null) {
+					String msg = UiStyle.extractMessage(res, "Credenciais inválidas!");
+					JOptionPane.showMessageDialog(LoginWindow.this, msg, "Falha na autenticação (" + status + ")",
+							JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
