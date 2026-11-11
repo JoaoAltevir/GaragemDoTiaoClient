@@ -8,7 +8,9 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.Box;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -22,6 +24,8 @@ import service.VehicleService;
 public class VehicleWindow extends JFrame {
 
 	private static final long serialVersionUID = 1L;
+	private static final String MANTER_ATUAL = "(Manter atual)";
+
 	private JPanel contentPane;
 	private MenuWindow menu;
 	private VehicleService vehicleService;
@@ -31,6 +35,7 @@ public class VehicleWindow extends JFrame {
 	private JTextField tf_licensePlate;
 	private JTextField tf_brand;
 	private JTextField tf_model;
+	private JCheckBox cb_clearModel;
 	private JComboBox<String> cb_type;
 
 	public VehicleWindow(MenuWindow menu) {
@@ -61,22 +66,23 @@ public class VehicleWindow extends JFrame {
 		String licensePlate = tf_licensePlate.getText().trim();
 		String brand = tf_brand.getText().trim();
 		String model = tf_model.getText().trim();
-		String type = (String) cb_type.getSelectedItem();
+		String typeSelection = (String) cb_type.getSelectedItem();
 
 		if (licensePlate.isEmpty()) {
-			JOptionPane.showMessageDialog(this, "Informe a placa do veículo.", "Campo obrigatório",
+			JOptionPane.showMessageDialog(this, "Informe a placa do veículo (7 caracteres).", "Campo obrigatório",
 					JOptionPane.WARNING_MESSAGE);
 			return;
 		}
 
 		if (!modoEdicao) {
-			if (brand.isEmpty() || model.isEmpty()) {
-				JOptionPane.showMessageDialog(this, "Preencha a marca e o modelo do veículo.", "Campos obrigatórios",
+			if (brand.isEmpty()) {
+				JOptionPane.showMessageDialog(this, "Informe a marca do veículo.", "Campo obrigatório",
 						JOptionPane.WARNING_MESSAGE);
 				return;
 			}
 
-			JsonObject res = vehicleService.createVehicle(brand, model, type, licensePlate);
+			String modelParam = model.isEmpty() ? null : model;
+			JsonObject res = vehicleService.createVehicle(brand, modelParam, typeSelection, licensePlate);
 			int status = UiStyle.extractStatusCode(res);
 			String msg = UiStyle.extractMessage(res, "Operação realizada.");
 
@@ -86,14 +92,22 @@ public class VehicleWindow extends JFrame {
 					menu.carregarVeiculos();
 				}
 				fecharJanela();
+			} else if (UiStyle.isSessionExpired(res)) {
+				JOptionPane.showMessageDialog(this, msg, "Sessão encerrada (401)", JOptionPane.WARNING_MESSAGE);
+				fecharJanela();
+				if (menu != null) {
+					menu.voltarParaLogin();
+				}
 			} else {
 				JOptionPane.showMessageDialog(this, msg, "Erro (" + status + ")", JOptionPane.ERROR_MESSAGE);
 			}
 		} else {
 			String brandParam = brand.isEmpty() ? null : brand;
+			boolean clearModel = cb_clearModel != null && cb_clearModel.isSelected();
 			String modelParam = model.isEmpty() ? null : model;
+			String typeParam = MANTER_ATUAL.equals(typeSelection) ? null : typeSelection;
 
-			JsonObject res = vehicleService.updateVehicle(licensePlate, brandParam, modelParam, type);
+			JsonObject res = vehicleService.updateVehicle(licensePlate, brandParam, modelParam, clearModel, typeParam);
 			int status = UiStyle.extractStatusCode(res);
 			String msg = UiStyle.extractMessage(res, "Operação realizada.");
 
@@ -103,6 +117,12 @@ public class VehicleWindow extends JFrame {
 					menu.carregarVeiculos();
 				}
 				fecharJanela();
+			} else if (UiStyle.isSessionExpired(res)) {
+				JOptionPane.showMessageDialog(this, msg, "Sessão encerrada (401)", JOptionPane.WARNING_MESSAGE);
+				fecharJanela();
+				if (menu != null) {
+					menu.voltarParaLogin();
+				}
 			} else {
 				JOptionPane.showMessageDialog(this, msg, "Erro (" + status + ")", JOptionPane.ERROR_MESSAGE);
 			}
@@ -113,10 +133,10 @@ public class VehicleWindow extends JFrame {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		String titulo = modoEdicao ? "Editar veículo" : "Cadastrar veículo";
 		String subtitulo = modoEdicao
-				? "Atualize as informações de marca, modelo ou motorização."
+				? "Altere marca, modelo ou tipo (campos em branco preservam o valor atual)."
 				: "Informe os dados do veículo para vinculá-lo à sua conta.";
 
-		UiStyle.configureFrame(this, titulo, 520, 560);
+		UiStyle.configureFrame(this, titulo, 540, modoEdicao ? 610 : 560);
 		contentPane = UiStyle.createPage();
 		setContentPane(contentPane);
 
@@ -125,11 +145,12 @@ public class VehicleWindow extends JFrame {
 
 		tf_licensePlate = new JTextField();
 		tf_licensePlate.setColumns(10);
-		if (modoEdicao && vehicleAtual != null) {
-			tf_licensePlate.setText(vehicleAtual.getLicensePlate() != null ? vehicleAtual.getLicensePlate() : "");
+		if (modoEdicao && vehicleAtual != null && vehicleAtual.getLicensePlate() != null
+				&& !vehicleAtual.getLicensePlate().isEmpty()) {
+			tf_licensePlate.setText(vehicleAtual.getLicensePlate());
 			tf_licensePlate.setEditable(false);
 		}
-		card.add(UiStyle.createField("Placa do veículo (ex: ABC1234)", tf_licensePlate));
+		card.add(UiStyle.createField("Placa do veículo (7 caracteres, ex: ABC1234)", tf_licensePlate));
 		card.add(Box.createVerticalStrut(14));
 
 		tf_brand = new JTextField();
@@ -137,7 +158,7 @@ public class VehicleWindow extends JFrame {
 		if (modoEdicao && vehicleAtual != null && vehicleAtual.getBrand() != null) {
 			tf_brand.setText(vehicleAtual.getBrand());
 		}
-		card.add(UiStyle.createField("Marca", tf_brand));
+		card.add(UiStyle.createField(modoEdicao ? "Marca (opcional)" : "Marca (1 a 20 caracteres)", tf_brand));
 		card.add(Box.createVerticalStrut(14));
 
 		tf_model = new JTextField();
@@ -145,14 +166,32 @@ public class VehicleWindow extends JFrame {
 		if (modoEdicao && vehicleAtual != null && vehicleAtual.getModel() != null) {
 			tf_model.setText(vehicleAtual.getModel());
 		}
-		card.add(UiStyle.createField("Modelo", tf_model));
+		card.add(UiStyle.createField("Modelo (opcional, máx. 20 caracteres)", tf_model));
+
+		if (modoEdicao) {
+			card.add(Box.createVerticalStrut(6));
+			cb_clearModel = UiStyle.createCheckBox("Limpar modelo (enviar model: null)");
+			cb_clearModel.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+			cb_clearModel.addActionListener(e -> {
+				boolean clear = cb_clearModel.isSelected();
+				tf_model.setEnabled(!clear);
+				if (clear) {
+					tf_model.setText("");
+				}
+			});
+			card.add(cb_clearModel);
+		}
 		card.add(Box.createVerticalStrut(14));
 
-		cb_type = new JComboBox<>(new String[] { "combustao", "eletrico" });
-		if (modoEdicao && vehicleAtual != null && vehicleAtual.getType() != null) {
-			cb_type.setSelectedItem(vehicleAtual.getType());
+		if (!modoEdicao) {
+			cb_type = new JComboBox<>(new String[] { "combustao", "eletrico" });
+		} else {
+			cb_type = new JComboBox<>(new String[] { MANTER_ATUAL, "combustao", "eletrico" });
 		}
-		card.add(UiStyle.createField("Tipo de motorização", cb_type));
+		String labelType = modoEdicao
+				? "Tipo de motorização (atual: " + (vehicleAtual != null && vehicleAtual.getType() != null ? vehicleAtual.getType() : "-") + ")"
+				: "Tipo de motorização";
+		card.add(UiStyle.createField(labelType, cb_type));
 		card.add(Box.createVerticalStrut(18));
 
 		JButton btn_save = UiStyle.primaryButton(modoEdicao ? "Salvar alterações" : "Cadastrar");

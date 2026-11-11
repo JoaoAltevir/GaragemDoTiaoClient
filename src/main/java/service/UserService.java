@@ -43,7 +43,7 @@ public class UserService {
             Session.setRole(data.get("role").getAsString());
         }
         
-        System.out.println(resData);
+        System.out.println("[CLIENTE] Login: " + resData);
         
         return resData;
         
@@ -78,11 +78,13 @@ public class UserService {
         JsonObject data = new JsonObject();
         data.addProperty("token", Session.getToken()); // Utiliza o token da sessão ativa
         
+        res = connection.sendRequest("logout", data);
+        System.out.println("[CLIENTE] Logout: " + res);
+
         Session.setToken(null);
         Session.setUsername(null);
         Session.setRole(null);
         
-        res = connection.sendRequest("logout", data);
         return res;
     }
 
@@ -105,7 +107,8 @@ public class UserService {
             }
             if (resData.has("role") && !resData.get("role").isJsonNull()) {
                 user.setRole(resData.get("role").getAsString());
-                if (usernameTarget != null && usernameTarget.equals(Session.getUsername())) {
+                if (usernameTarget != null && usernameTarget.equals(Session.getUsername())
+                        && (user.getUsername() == null || user.getUsername().equals(Session.getUsername()))) {
                     Session.setRole(user.getRole());
                 }
             }
@@ -146,16 +149,7 @@ public class UserService {
     }
 
     public JsonObject deleteUser() {
-        JsonObject data = new JsonObject();
-        data.addProperty("token", Session.getToken());
-        data.addProperty("username", Session.getUsername());
-        
-        Session.setToken(null);
-        Session.setUsername(null);
-        Session.setRole(null);
-        
-        res = connection.sendRequest("deleteuser", data);
-        return res;
+        return deleteUser(Session.getUsername());
     }
 
     public JsonObject deleteUser(String usernameTarget) {
@@ -165,7 +159,11 @@ public class UserService {
         
         res = connection.sendRequest("deleteuser", data);
 
-        if (usernameTarget != null && usernameTarget.equals(Session.getUsername())) {
+        int statusCode = (res != null && res.has("statusCode") && !res.get("statusCode").isJsonNull())
+                ? res.get("statusCode").getAsInt()
+                : 500;
+
+        if (statusCode == 200 && usernameTarget != null && usernameTarget.equals(Session.getUsername())) {
             Session.setToken(null);
             Session.setUsername(null);
             Session.setRole(null);

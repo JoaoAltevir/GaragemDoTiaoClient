@@ -75,6 +75,12 @@ public class AdminUserWindow extends JFrame {
 				menu.consultarUsuarioAdmin(username);
 			}
 			fecharJanela();
+		} else if (UiStyle.isSessionExpired(res)) {
+			JOptionPane.showMessageDialog(this, msg, "Sessão encerrada (401)", JOptionPane.WARNING_MESSAGE);
+			fecharJanela();
+			if (menu != null) {
+				menu.voltarParaLogin();
+			}
 		} else {
 			JOptionPane.showMessageDialog(this, msg, "Erro (" + status + ")", JOptionPane.ERROR_MESSAGE);
 		}

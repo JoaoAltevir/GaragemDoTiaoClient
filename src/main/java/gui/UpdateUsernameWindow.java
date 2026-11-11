@@ -56,6 +56,13 @@ public class UpdateUsernameWindow extends JFrame {
 				perfil.refresh(novoNome);
 			}
 			fecharJanela();
+		} else if (UiStyle.isSessionExpired(res)) {
+			javax.swing.JOptionPane.showMessageDialog(this, msg, "Sessão encerrada (401)",
+					javax.swing.JOptionPane.WARNING_MESSAGE);
+			fecharJanela();
+			if (perfil != null) {
+				perfil.voltarParaLogin();
+			}
 		} else {
 			javax.swing.JOptionPane.showMessageDialog(this, msg, "Erro (" + status + ")",
 					javax.swing.JOptionPane.ERROR_MESSAGE);

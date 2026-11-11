@@ -129,6 +129,13 @@ public class MenuWindow extends JFrame {
 
 	public void abrirTelaProfile() {
 		User user = userService.getUser(Session.getUsername());
+		JsonObject res = userService.getRes();
+		if (UiStyle.isSessionExpired(res)) {
+			String msg = UiStyle.extractMessage(res, "Sessão expirada ou encerrada.");
+			JOptionPane.showMessageDialog(this, msg, "Sessão encerrada (401)", JOptionPane.WARNING_MESSAGE);
+			voltarParaLogin();
+			return;
+		}
 		String nome = (user != null && user.getName() != null) ? user.getName() : Session.getUsername();
 		String uname = (user != null && user.getUsername() != null) ? user.getUsername() : Session.getUsername();
 		String role = (user != null && user.getRole() != null) ? user.getRole() : Session.getRole();
@@ -224,9 +231,13 @@ public class MenuWindow extends JFrame {
 			lbl_vagasDisponiveis.setText("0");
 			lbl_vagasOcupadas.setText("0");
 			lbl_vagasManutencao.setText("0");
+			String msg = UiStyle.extractMessage(res, "Não foi possível carregar as vagas.");
 			lbl_statusVagas.setForeground(UiStyle.DANGER);
-			lbl_statusVagas.setText("Erro (" + status + "): "
-					+ UiStyle.extractMessage(res, "Não foi possível carregar as vagas."));
+			lbl_statusVagas.setText("Erro (" + status + "): " + msg);
+			if (UiStyle.isSessionExpired(res)) {
+				JOptionPane.showMessageDialog(this, msg, "Sessão encerrada (401)", JOptionPane.WARNING_MESSAGE);
+				voltarParaLogin();
+			}
 		}
 	}
 
@@ -283,6 +294,9 @@ public class MenuWindow extends JFrame {
 			if (status == 200) {
 				JOptionPane.showMessageDialog(this, msg, "Vaga removida", JOptionPane.INFORMATION_MESSAGE);
 				carregarVagas();
+			} else if (UiStyle.isSessionExpired(res)) {
+				JOptionPane.showMessageDialog(this, msg, "Sessão encerrada (401)", JOptionPane.WARNING_MESSAGE);
+				voltarParaLogin();
 			} else {
 				JOptionPane.showMessageDialog(this, msg, "Erro (" + status + ")", JOptionPane.ERROR_MESSAGE);
 			}
@@ -320,6 +334,9 @@ public class MenuWindow extends JFrame {
 					vagaEncontrada.getFloor(),
 					vagaEncontrada.getStatus() != null ? vagaEncontrada.getStatus() : "-");
 			JOptionPane.showMessageDialog(this, detalhes, "Veículo localizado", JOptionPane.INFORMATION_MESSAGE);
+		} else if (UiStyle.isSessionExpired(res)) {
+			JOptionPane.showMessageDialog(this, msg, "Sessão encerrada (401)", JOptionPane.WARNING_MESSAGE);
+			voltarParaLogin();
 		} else {
 			JOptionPane.showMessageDialog(this, msg, "Não localizado (" + status + ")", JOptionPane.WARNING_MESSAGE);
 		}
@@ -358,9 +375,13 @@ public class MenuWindow extends JFrame {
 						+ " (" + listaVeiculos.size() + " veículo(s))");
 			}
 		} else {
+			String msg = UiStyle.extractMessage(res, "Não foi possível obter os veículos.");
 			lbl_statusVeiculos.setForeground(UiStyle.DANGER);
-			lbl_statusVeiculos.setText("Erro (" + status + "): "
-					+ UiStyle.extractMessage(res, "Não foi possível obter os veículos."));
+			lbl_statusVeiculos.setText("Erro (" + status + "): " + msg);
+			if (UiStyle.isSessionExpired(res)) {
+				JOptionPane.showMessageDialog(this, msg, "Sessão encerrada (401)", JOptionPane.WARNING_MESSAGE);
+				voltarParaLogin();
+			}
 		}
 	}
 
@@ -416,6 +437,9 @@ public class MenuWindow extends JFrame {
 					v.getModel() != null ? v.getModel() : "-",
 					v.getType() != null ? v.getType() : "-");
 			JOptionPane.showMessageDialog(this, detalhes, "Dados do veículo", JOptionPane.INFORMATION_MESSAGE);
+		} else if (UiStyle.isSessionExpired(res)) {
+			JOptionPane.showMessageDialog(this, msg, "Sessão encerrada (401)", JOptionPane.WARNING_MESSAGE);
+			voltarParaLogin();
 		} else {
 			JOptionPane.showMessageDialog(this, msg, "Erro (" + status + ")", JOptionPane.ERROR_MESSAGE);
 		}
@@ -452,6 +476,9 @@ public class MenuWindow extends JFrame {
 			if (status == 200) {
 				JOptionPane.showMessageDialog(this, msg, "Veículo removido", JOptionPane.INFORMATION_MESSAGE);
 				carregarVeiculos();
+			} else if (UiStyle.isSessionExpired(res)) {
+				JOptionPane.showMessageDialog(this, msg, "Sessão encerrada (401)", JOptionPane.WARNING_MESSAGE);
+				voltarParaLogin();
 			} else {
 				JOptionPane.showMessageDialog(this, msg, "Erro (" + status + ")", JOptionPane.ERROR_MESSAGE);
 			}
@@ -488,7 +515,12 @@ public class MenuWindow extends JFrame {
 			lbl_adminUserRoleVal.setText("Perfil (Role): -");
 			lbl_statusAdmin.setForeground(UiStyle.DANGER);
 			lbl_statusAdmin.setText("Erro (" + status + "): " + msg);
-			JOptionPane.showMessageDialog(this, msg, "Erro (" + status + ")", JOptionPane.ERROR_MESSAGE);
+			if (UiStyle.isSessionExpired(res)) {
+				JOptionPane.showMessageDialog(this, msg, "Sessão encerrada (401)", JOptionPane.WARNING_MESSAGE);
+				voltarParaLogin();
+			} else {
+				JOptionPane.showMessageDialog(this, msg, "Erro (" + status + ")", JOptionPane.ERROR_MESSAGE);
+			}
 		}
 	}
 
@@ -520,6 +552,9 @@ public class MenuWindow extends JFrame {
 		if (status == 200) {
 			JOptionPane.showMessageDialog(this, msg, "Sucesso", JOptionPane.INFORMATION_MESSAGE);
 			consultarUsuarioAdmin(target);
+		} else if (UiStyle.isSessionExpired(res)) {
+			JOptionPane.showMessageDialog(this, msg, "Sessão encerrada (401)", JOptionPane.WARNING_MESSAGE);
+			voltarParaLogin();
 		} else {
 			JOptionPane.showMessageDialog(this, msg, "Erro (" + status + ")", JOptionPane.ERROR_MESSAGE);
 		}
@@ -561,6 +596,9 @@ public class MenuWindow extends JFrame {
 				lbl_adminUserRoleVal.setText("Perfil (Role): -");
 				lbl_statusAdmin.setForeground(UiStyle.SUCCESS);
 				lbl_statusAdmin.setText(msg);
+			} else if (UiStyle.isSessionExpired(res)) {
+				JOptionPane.showMessageDialog(this, msg, "Sessão encerrada (401)", JOptionPane.WARNING_MESSAGE);
+				voltarParaLogin();
 			} else {
 				JOptionPane.showMessageDialog(this, msg, "Erro (" + status + ")", JOptionPane.ERROR_MESSAGE);
 			}

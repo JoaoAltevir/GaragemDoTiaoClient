@@ -61,7 +61,11 @@ public class VehicleService {
 
         data.addProperty("token", Session.getToken());
         data.addProperty("brand", brand);
-        data.addProperty("model", model);
+        if (model != null) {
+            data.addProperty("model", model);
+        } else {
+            data.add("model", com.google.gson.JsonNull.INSTANCE);
+        }
         data.addProperty("type", type);
         data.addProperty("licensePlate", licensePlate);
 
@@ -133,6 +137,10 @@ public class VehicleService {
     }
 
     public JsonObject updateVehicle(String licensePlate, String brand, String model, String type) {
+        return updateVehicle(licensePlate, brand, model, false, type);
+    }
+
+    public JsonObject updateVehicle(String licensePlate, String brand, String model, boolean clearModel, String type) {
         JsonObject data = new JsonObject();
 
         data.addProperty("token", Session.getToken());
@@ -141,7 +149,9 @@ public class VehicleService {
         if (brand != null) {
             data.addProperty("brand", brand);
         }
-        if (model != null) {
+        if (clearModel) {
+            data.add("model", com.google.gson.JsonNull.INSTANCE);
+        } else if (model != null) {
             data.addProperty("model", model);
         }
         if (type != null) {

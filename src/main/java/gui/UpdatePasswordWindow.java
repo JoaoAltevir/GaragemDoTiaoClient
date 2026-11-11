@@ -17,17 +17,23 @@ public class UpdatePasswordWindow extends JFrame {
 	private JPasswordField tf_oldPassword;
 	private JPasswordField tf_newPassword;
 	private UserService servico;
+	private ProfileWindow perfil;
 	
 	/**
 	 * Create the frame.
 	 */
 	public UpdatePasswordWindow() {
+		this(null);
+	}
+
+	public UpdatePasswordWindow(ProfileWindow p) {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				fecharJanela();
 			}
 		});
+		this.perfil = p;
 		this.servico = new UserService();
 	
 		setTitle("Alterar senha");
@@ -53,6 +59,13 @@ public class UpdatePasswordWindow extends JFrame {
 			javax.swing.JOptionPane.showMessageDialog(this, msg, "Sucesso",
 					javax.swing.JOptionPane.INFORMATION_MESSAGE);
 			fecharJanela();
+		} else if (UiStyle.isSessionExpired(res)) {
+			javax.swing.JOptionPane.showMessageDialog(this, msg, "Sessão encerrada (401)",
+					javax.swing.JOptionPane.WARNING_MESSAGE);
+			fecharJanela();
+			if (perfil != null) {
+				perfil.voltarParaLogin();
+			}
 		} else {
 			javax.swing.JOptionPane.showMessageDialog(this, msg, "Erro (" + status + ")",
 					javax.swing.JOptionPane.ERROR_MESSAGE);

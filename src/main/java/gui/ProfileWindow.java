@@ -73,7 +73,7 @@ public class ProfileWindow extends JFrame {
 	
 	public void atualizarSenha() {
 		
-		this.updatePassword = new UpdatePasswordWindow();
+		this.updatePassword = new UpdatePasswordWindow(this);
 		this.updatePassword.setVisible(true);
 	}
 	
@@ -114,11 +114,16 @@ public class ProfileWindow extends JFrame {
 			
 			com.google.gson.JsonObject res = servico.deleteUser();
 			int status = UiStyle.extractStatusCode(res);
-			String msg = UiStyle.extractMessage(res, "Usuário deletado com sucesso.");
-			JOptionPane.showMessageDialog(this, msg,
-					status == 200 ? "Conta excluída" : "Aviso (" + status + ")",
-					status == 200 ? JOptionPane.INFORMATION_MESSAGE : JOptionPane.WARNING_MESSAGE);
-			voltarParaLogin();
+			String msg = UiStyle.extractMessage(res, "Operação realizada.");
+			if (status == 200) {
+				JOptionPane.showMessageDialog(this, msg, "Conta excluída", JOptionPane.INFORMATION_MESSAGE);
+				voltarParaLogin();
+			} else if (UiStyle.isSessionExpired(res)) {
+				JOptionPane.showMessageDialog(this, msg, "Sessão encerrada (401)", JOptionPane.WARNING_MESSAGE);
+				voltarParaLogin();
+			} else {
+				JOptionPane.showMessageDialog(this, msg, "Erro (" + status + ")", JOptionPane.ERROR_MESSAGE);
+			}
 	
 		}
 		

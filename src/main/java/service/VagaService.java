@@ -71,6 +71,11 @@ public class VagaService {
     }
 
     public JsonObject updateVaga(String spotName, String newSpotName, Integer floor, String status, String licensePlate) {
+        return updateVaga(spotName, newSpotName, floor, status, licensePlate, false);
+    }
+
+    public JsonObject updateVaga(String spotName, String newSpotName, Integer floor, String status, String licensePlate,
+            boolean clearLicensePlate) {
         JsonObject data = new JsonObject();
 
         data.addProperty("token", Session.getToken());
@@ -85,7 +90,9 @@ public class VagaService {
         if (status != null) {
             data.addProperty("status", status);
         }
-        if (licensePlate != null) {
+        if (clearLicensePlate) {
+            data.add("licensePlate", com.google.gson.JsonNull.INSTANCE);
+        } else if (licensePlate != null) {
             data.addProperty("licensePlate", licensePlate);
         }
 

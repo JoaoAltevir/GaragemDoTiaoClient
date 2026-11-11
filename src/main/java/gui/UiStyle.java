@@ -256,4 +256,18 @@ final class UiStyle {
 		}
 		return 500;
 	}
+
+	static boolean isSessionExpired(com.google.gson.JsonObject res) {
+		if (extractStatusCode(res) != 401) {
+			return false;
+		}
+		String msg = extractMessage(res, "").toLowerCase();
+		if (msg.contains("sessão expirada") || msg.contains("sessao expirada") || msg.contains("encerrada")) {
+			entities.Session.setToken(null);
+			entities.Session.setUsername(null);
+			entities.Session.setRole(null);
+			return true;
+		}
+		return false;
+	}
 }
